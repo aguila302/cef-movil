@@ -1,0 +1,15 @@
+<ion-header>
+    <ion-navbar>
+        <button ion-button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-title>Autopistas</ion-title>
+    </ion-navbar>
+</ion-header>
+<ion-content padding>
+    <ion-list margin-top>
+        <button ion-item *ngFor="let autopista of autopistas">
+            {{autopista.descripcion}}
+        </button>
+    </ion-list>
+</ion-content>

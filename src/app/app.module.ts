@@ -1,34 +1,92 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { ErrorHandler, NgModule } from '@angular/core';
-import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
+import {
+	BrowserModule
+} from '@angular/platform-browser';
+import {
+	ErrorHandler,
+	NgModule
+} from '@angular/core';
+import {
+	IonicApp,
+	IonicErrorHandler,
+	IonicModule
+} from 'ionic-angular';
 
-import { MyApp } from './app.component';
-import { HomePage } from '../pages/home/home';
-import { ListPage } from '../pages/list/list';
+import {
+	MyApp
+} from './app.component';
+import {
+	HomePage
+} from '../pages/home/home';
+import {
+	ListPage
+} from '../pages/list/list';
+// import {
+// 	ListadoAutopistasPage
+// } from '../pages/listado-autopistas/listado-autopistas';
 
-import { StatusBar } from '@ionic-native/status-bar';
-import { SplashScreen } from '@ionic-native/splash-screen';
+import {
+	StatusBar
+} from '@ionic-native/status-bar';
+import {
+	SplashScreen
+} from '@ionic-native/splash-screen';
+import {
+	AuthApiProvider
+} from '../providers/auth-api/auth-api'
+import {
+	AuthProvider
+} from '../providers/aplicacion/auth';
+import {
+	HTTP
+} from '@ionic-native/http';
+import {
+	DatabaseProvider
+} from '../providers/database/database'
+import {
+	SQLite
+} from '@ionic-native/sqlite'
+import {
+	IonicStorageModule
+} from '@ionic/storage'
+import {
+	AutopistasApiProvider
+} from '../providers/autopistas-api/autopistas-api';
+import {
+	AutopistasProvider
+} from '../providers/aplicacion/autopistas';
 
 @NgModule({
-  declarations: [
-    MyApp,
-    HomePage,
-    ListPage
-  ],
-  imports: [
-    BrowserModule,
-    IonicModule.forRoot(MyApp),
-  ],
-  bootstrap: [IonicApp],
-  entryComponents: [
-    MyApp,
-    HomePage,
-    ListPage
-  ],
-  providers: [
-    StatusBar,
-    SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
-  ]
+	declarations: [
+		MyApp,
+		HomePage,
+		ListPage,
+		// ListadoAutopistasPage
+	],
+	imports: [
+		BrowserModule,
+		IonicModule.forRoot(MyApp),
+		IonicStorageModule.forRoot()
+	],
+	bootstrap: [IonicApp],
+	entryComponents: [
+		MyApp,
+		HomePage,
+		ListPage,
+		// ListadoAutopistasPage
+	],
+	providers: [
+		StatusBar,
+		SplashScreen, {
+			provide: ErrorHandler,
+			useClass: IonicErrorHandler
+		},
+		AuthApiProvider,
+		HTTP,
+		SQLite,
+		DatabaseProvider,
+		AuthProvider,
+		AutopistasApiProvider,
+		AutopistasProvider
+	]
 })
 export class AppModule {}

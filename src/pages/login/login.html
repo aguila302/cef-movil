@@ -1,0 +1,42 @@
+<ion-header>
+
+  <ion-navbar text-center>
+    <ion-title>Iniciar sesión</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+    <div class="logo">
+        <img src="assets/imgs/appicon.svg" alt="Ionic logo">
+    </div>
+    <form #loginForm="ngForm" novalidate>
+        <ion-list no-lines>
+            <ion-item>
+                <ion-label stacked color="primary">Usuario</ion-label>
+                <ion-input [(ngModel)]="login.usuario" name="usuario" type="text" #usuario="ngModel" spellcheck="false" autocapitalize="off"
+                    required>
+                </ion-input>
+            </ion-item>
+            <p ion-text [hidden]="usuario.valid || submit == false" color="danger" padding-left>
+                El usuario es obligatorio.
+            </p>
+
+            <ion-item>
+                <ion-label stacked color="primary">Contraseña</ion-label>
+                <ion-input [(ngModel)]="login.clave" name="clave" type="password" #clave="ngModel" required spellcheck="false" autocapitalize="off">
+                </ion-input>
+            </ion-item>
+            <p ion-text [hidden]="clave.valid || submit == false" color="danger" padding-left>
+                La contraseña es obligatorio.
+            </p>
+        </ion-list>
+
+        <ion-row responsive-sm>
+            <ion-col>
+                <button large ion-button (click)="onLogin(loginForm)" type="submit" block>Login</button>
+            </ion-col>
+        </ion-row>
+    </form>
+</ion-content>
