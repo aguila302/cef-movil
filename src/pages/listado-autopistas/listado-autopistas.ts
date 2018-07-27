@@ -5,7 +5,9 @@ import {
 import {
 	IonicPage,
 	NavController,
-	NavParams
+	NavParams,
+	ActionSheetController,
+	LoadingController
 } from 'ionic-angular'
 import {
 	Storage
@@ -14,8 +16,17 @@ import {
 	AutopistasApiProvider
 } from '../../providers/autopistas-api/autopistas-api'
 import {
+	TramosApiProvider
+} from '../../providers/tramos-api/tramos-api'
+import {
+	SeccionesApiProvider
+} from '../../providers/secciones-api/secciones-api'
+import {
 	AutopistasProvider
 } from '../../providers/aplicacion/autopistas'
+import {
+	TramosProvider
+} from '../../providers/aplicacion/tramos'
 
 
 @IonicPage()
@@ -27,9 +38,11 @@ export class ListadoAutopistasPage {
 	usuario: number = 0
 	access_token: string = ''
 	autopistas = []
+
 	constructor(public navCtrl: NavController, public navParams: NavParams, private storage: Storage,
-		private autopistasApi: AutopistasApiProvider, private zone: NgZone,
-		private autopistasProvider: AutopistasProvider) {
+		private autopistasApi: AutopistasApiProvider, private zone: NgZone, private tramosApi: TramosApiProvider,
+		private autopistasProvider: AutopistasProvider, public acciones: ActionSheetController, private tramosProvider: TramosProvider,
+		public loading: LoadingController, private seccionesApiProvider: SeccionesApiProvider) {
 
 		this.usuario = navParams.get('usuario')
 		this.access_token = navParams.get('access_token')
@@ -41,6 +54,14 @@ export class ListadoAutopistasPage {
 
 	/* Resolver al endpoint del api para obtener el listado de autopistas. */
 	obtenerAutopistasApi = () => {
+		/* Crear un loager en espera para la descarga de los catalogos al endpoint del api. */
+		let loader = this.loading.create({
+			spinner: 'circles',
+			content: 'Descargando la información, por favor espera',
+		})
+		/* Mostrar loager en espera. */
+		loader.present();
+
 		/* Obtener datos del usuario conectado. */
 		this.storage.get('auth').then((usuario) => {
 			this.autopistasApi.obtenerAutopistas(usuario).then((response) => {
@@ -49,6 +70,27 @@ export class ListadoAutopistasPage {
 					.then((response) => {
 						this.zone.run(() => {
 							this.autopistas = response
+						})
+
+						response.map((item) => {
+							/* Obtener listado de tramos por autopistas al endpoint del api. */
+							this.tramosApi.obtenerTramos(usuario, item.id).then((tramos) => {
+
+								/* Registrar tramos en el origen de datos. */
+								this.tramosProvider.registrarTramos(item).then((tramosInsertados) => {
+									// console.log(tramosInsertados)
+									tramos.data.data.map((item) => {
+										// console.log(item.autopista_id, item.id, usuario);
+										/* Descarga el catalogo de secciones al endpoint del api. */
+										this.seccionesApiProvider.obtenerSecciones(item.autopista_id, item.id, usuario)
+											.then((secciones) => {
+												console.log(secciones)
+											})
+
+									})
+									loader.dismiss()
+								})
+							})
 						})
 					})
 
@@ -70,5 +112,32 @@ export class ListadoAutopistasPage {
 				})
 			})
 		})
+	}
+
+	/* Mostrar opciones a realizar en una autopista. */
+	mostrarOpciones = (autopista) => {
+
+		let apciones = this.acciones.create({
+			title: 'Modify your album',
+			buttons: [{
+				text: 'Destructive',
+				role: 'destructive',
+				handler: () => {
+					console.log('Destructive clicked');
+				}
+			}, {
+				text: 'Archive',
+				handler: () => {
+					console.log('Archive clicked');
+				}
+			}, {
+				text: 'Cancel',
+				role: 'cancel',
+				handler: () => {
+					console.log('Cancel clicked');
+				}
+			}]
+		});
+		apciones.present();
 	}
 }

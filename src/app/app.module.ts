@@ -20,9 +20,6 @@ import {
 import {
 	ListPage
 } from '../pages/list/list';
-// import {
-// 	ListadoAutopistasPage
-// } from '../pages/listado-autopistas/listado-autopistas';
 
 import {
 	StatusBar
@@ -53,7 +50,17 @@ import {
 } from '../providers/autopistas-api/autopistas-api';
 import {
 	AutopistasProvider
-} from '../providers/aplicacion/autopistas';
+} from '../providers/aplicacion/autopistas'
+
+import {
+	TramosProvider
+} from '../providers/aplicacion/tramos';
+import {
+	TramosApiProvider
+} from '../providers/tramos-api/tramos-api';
+import {
+	SeccionesApiProvider
+} from '../providers/secciones-api/secciones-api';
 
 @NgModule({
 	declarations: [
@@ -86,7 +93,10 @@ import {
 		DatabaseProvider,
 		AuthProvider,
 		AutopistasApiProvider,
-		AutopistasProvider
+		AutopistasProvider,
+		TramosApiProvider,
+		TramosProvider,
+		SeccionesApiProvider
 	]
 })
 export class AppModule {}

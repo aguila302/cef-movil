@@ -62,20 +62,21 @@ export class LoginPage {
 		 * @param {[NgForm]} form.valid
 		 */
 		if (form.valid) {
-			/* Crear un loager en espera. */
+			/* Crear un loager en espera para la autenticación al endpoint del api. */
 			let loader = this.loading.create({
-				spinner: 'dots',
+				spinner: 'circles',
 				content: 'Por favor espera',
 			})
 			/* Mostrar loager en espera. */
 			loader.present();
 			this.authProvider.obtenerTokenAcceso(form.form.controls)
 				.then((response) => {
-					response.status === 200 ? (this.registrarToken(response)) : (this.muestraError(response))
-					/* Cerar el loager en espera. */
+					/* Cerrar el loager en espera. */
 					setTimeout(() => {
 						loader.dismiss()
+						response.status === 200 ? (this.registrarToken(response)) : (this.muestraError(response))
 					}, 5000)
+
 				}).catch((error) => {
 					console.error.bind(error)
 				})

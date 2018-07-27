@@ -69,6 +69,15 @@ export class DatabaseProvider {
                         cadenamiento_final_m INTEGER,
                         user_id INTEGER,
                           FOREIGN KEY(user_id) REFERENCES usuarios(id));`)
+			tx.executeSql(`CREATE TABLE IF NOT EXISTS tramos (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        autopista_id_api INTEGER,
+                        cadenamiento_inicial_km INTEGER,
+                        cadenamiento_inicial_m INTEGER,
+                        cadenamiento_final_km INTEGER,
+                        cadenamiento_final_m INTEGER,
+                        autopista_id_movil INTEGER,
+                          FOREIGN KEY(autopista_id_movil) REFERENCES autopistas(id));`)
 		})
 	}
 
@@ -139,7 +148,9 @@ export class DatabaseProvider {
 
 					this.database.executeSql(sql, [item.id, item.descripcion, item.cadenamiento_inicial_km, item.cadenamiento_inicial_m,
 						item.cadenamiento_final_km, item.cadenamiento_final_m, usuario.usuario_id
-					])
+					]).then((id) => {
+						item['insert_id'] = id.insertId
+					})
 				}
 				return Promise.resolve(response.data.data)
 			})
@@ -158,5 +169,21 @@ export class DatabaseProvider {
 						return autopistas
 					})
 			})
+	}
+
+	/* Registrar tramos en el origen de datos. */
+	registrarTramos = (data) => {
+		let paramettros = [data.id, data.cadenamiento_inicial_km, data.cadenamiento_inicial_m,
+			data.cadenamiento_final_km, data.cadenamiento_final_m, data.insert_id
+		]
+		return this.isReady()
+			.then(() => {
+				return this.database.executeSql(`insert into tramos (autopista_id_api, cadenamiento_inicial_km, cadenamiento_inicial_m,
+					cadenamiento_final_km, cadenamiento_final_m, autopista_id_movil)
+                    values(?,?,?,?,?,?)`, paramettros).then((id) => {
+					return id.insertId
+				})
+			})
+
 	}
 }
