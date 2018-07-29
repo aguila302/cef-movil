@@ -68,14 +68,9 @@ export class ListadoAutopistasPage {
 				/* Registrar autopistas en el origen de datos. */
 				this.autopistasProvider.registrarAutopistas(usuario, response)
 					.then((response) => {
-						this.zone.run(() => {
-							this.autopistas = response
-						})
-
 						response.map((item) => {
 							/* Obtener listado de tramos por autopistas al endpoint del api. */
 							this.tramosApi.obtenerTramos(usuario, item.id).then((tramos) => {
-
 								/* Registrar tramos en el origen de datos. */
 								this.tramosProvider.registrarTramos(item).then((tramosInsertados) => {
 									// console.log(tramosInsertados)
@@ -88,7 +83,12 @@ export class ListadoAutopistasPage {
 											})
 
 									})
-									loader.dismiss()
+									setTimeout(() => {
+										this.zone.run(() => {
+											this.autopistas = response
+										})
+										loader.dismiss()
+									}, 6000)
 								})
 							})
 						})
