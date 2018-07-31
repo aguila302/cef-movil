@@ -27,6 +27,9 @@ import {
 import {
 	TramosProvider
 } from '../../providers/aplicacion/tramos'
+import {
+	SeccionesProvider
+} from '../../providers/aplicacion/secciones'
 
 
 @IonicPage()
@@ -42,7 +45,8 @@ export class ListadoAutopistasPage {
 	constructor(public navCtrl: NavController, public navParams: NavParams, private storage: Storage,
 		private autopistasApi: AutopistasApiProvider, private zone: NgZone, private tramosApi: TramosApiProvider,
 		private autopistasProvider: AutopistasProvider, public acciones: ActionSheetController, private tramosProvider: TramosProvider,
-		public loading: LoadingController, private seccionesApiProvider: SeccionesApiProvider) {
+		public loading: LoadingController, private seccionesApiProvider: SeccionesApiProvider,
+		private seccionesProvider: SeccionesProvider) {
 
 		this.usuario = navParams.get('usuario')
 		this.access_token = navParams.get('access_token')
@@ -64,35 +68,52 @@ export class ListadoAutopistasPage {
 
 		/* Obtener datos del usuario conectado. */
 		this.storage.get('auth').then((usuario) => {
-			this.autopistasApi.obtenerAutopistas(usuario).then((response) => {
+			this.autopistasApi.obtenerAutopistas(usuario).then((autopistasDelApi) => {
 				/* Registrar autopistas en el origen de datos. */
-				this.autopistasProvider.registrarAutopistas(usuario, response)
-					.then((response) => {
-						response.map((item) => {
-							/* Obtener listado de tramos por autopistas al endpoint del api. */
-							this.tramosApi.obtenerTramos(usuario, item.id).then((tramos) => {
-								/* Registrar tramos en el origen de datos. */
-								this.tramosProvider.registrarTramos(item).then((tramosInsertados) => {
-									// console.log(tramosInsertados)
-									tramos.data.data.map((item) => {
-										// console.log(item.autopista_id, item.id, usuario);
-										/* Descarga el catalogo de secciones al endpoint del api. */
-										this.seccionesApiProvider.obtenerSecciones(item.autopista_id, item.id, usuario)
-											.then((secciones) => {
-												console.log(secciones)
-											})
+				this.autopistasProvider.registrarAutopistas(usuario, autopistasDelApi).then((autopistasRegistradas) => {
+					autopistasRegistradas.map((item) => {
+						/* Obtener listado de tramos por autopistas al endpoint del api. */
+						this.tramosApi.obtenerTramos(usuario, item.id).then((tramosDelApi) => {
+							// console.log(tramosDelApi)
+							/* Registrar tramos en el origen de datos. */
+							this.tramosProvider.registrarTramos(item.insert_id, tramosDelApi)
+							// .then((tramosInsertados) => {
 
-									})
-									setTimeout(() => {
-										this.zone.run(() => {
-											this.autopistas = response
-										})
-										loader.dismiss()
-									}, 6000)
-								})
-							})
+							// tramos.data.data.map((item) => {
+							// 	/* Descarga el catalogo de secciones al endpoint del api. */
+							// 	this.seccionesApiProvider.obtenerSecciones(item.autopista_id, item.id, usuario)
+							// 		.then((secciones) => {
+							// 			secciones.data.data.map((item) => {
+							// 				// console.log(item);
+
+							// 			})
+							// 			this.seccionesProvider.registrarSecciones(secciones)
+							// 		})
+
+							// })
+							// setTimeout(() => {
+							// 	this.zone.run(() => {
+							// 		this.autopistas = response
+							// 	})
+							// 	loader.dismiss()
+							// }, 6000)
+							// })
 						})
 					})
+				})
+				// response.data.data.map((autopistas) => {
+				// 	this.tramosApi.obtenerTramos(usuario, autopistas.id).then((response) => {
+				// 		// console.log(response.data.data);
+				// 		response.data.data.map((tramos) => {
+				// 			this.seccionesApiProvider.obtenerSecciones(autopistas.id, tramos.id, usuario)
+				// 				.then((secciones) => {
+				// 					console.log(secciones)
+				// 					//this.autopistasProvider.registrarAutopistas(usuario, secciones.data.data)
+				// 				})
+
+				// 		})
+				// 	})
+				// })
 
 			}).catch((error) => {
 				console.error.bind(error)

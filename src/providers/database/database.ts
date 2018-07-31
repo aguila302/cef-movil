@@ -77,7 +77,21 @@ export class DatabaseProvider {
                         cadenamiento_final_km INTEGER,
                         cadenamiento_final_m INTEGER,
                         autopista_id_movil INTEGER,
-                          FOREIGN KEY(autopista_id_movil) REFERENCES autopistas(id));`)
+                        FOREIGN KEY(autopista_id_movil) REFERENCES autopistas(id));`)
+
+			tx.executeSql(`CREATE TABLE IF NOT EXISTS secciones (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        cadenamiento_inicial_km INTEGER,
+                        cadenamiento_inicial_m INTEGER,
+                        cadenamiento_final_km INTEGER,
+                        cadenamiento_final_m INTEGER,
+                        autopista_id_api INTEGER,
+                        autopista_id_movil INTEGER,
+                        tramo_id_api INTEGER,
+                        tramo_id_movil INTEGER,
+                        FOREIGN KEY(tramo_id_movil) REFERENCES tramos(id),
+						FOREIGN KEY(autopista_id_movil) REFERENCES autopistas(id));
+		`)
 		})
 	}
 
@@ -139,7 +153,6 @@ export class DatabaseProvider {
 
 	/* Registrar autopistas en el origen de datos. */
 	registrarAutopistas(usuario, response) {
-
 		return this.isReady()
 			.then(() => {
 				for (let item of response.data.data) {
@@ -172,18 +185,30 @@ export class DatabaseProvider {
 	}
 
 	/* Registrar tramos en el origen de datos. */
-	registrarTramos = (data) => {
-		let paramettros = [data.id, data.cadenamiento_inicial_km, data.cadenamiento_inicial_m,
-			data.cadenamiento_final_km, data.cadenamiento_final_m, data.insert_id
-		]
-		return this.isReady()
-			.then(() => {
-				return this.database.executeSql(`insert into tramos (autopista_id_api, cadenamiento_inicial_km, cadenamiento_inicial_m,
-					cadenamiento_final_km, cadenamiento_final_m, autopista_id_movil)
-                    values(?,?,?,?,?,?)`, paramettros).then((id) => {
-					return id.insertId
-				})
-			})
+	registrarTramos = (autopistas, tramos) => {
+		console.log(autopistas)
+		console.log(tramos)
+
+
+		// let paramettros = [data.id, data.cadenamiento_inicial_km, data.cadenamiento_inicial_m,
+		// 	data.cadenamiento_final_km, data.cadenamiento_final_m, data.insert_id
+		// ]
+		// return this.isReady()
+		// 	.then(() => {
+		// 		return this.database.executeSql(`insert into tramos (autopista_id_api, cadenamiento_inicial_km, cadenamiento_inicial_m,
+		// 			cadenamiento_final_km, cadenamiento_final_m, autopista_id_movil)
+		//                   values(?,?,?,?,?,?)`, paramettros).then((id) => {
+
+		// 			data['tramo_insert_id'] = id.insertId
+		// 			return data
+		// 		})
+		// 	})
+
+	}
+
+	/* Registra las secciones en el origen de datos. */
+	registrarSecciones = (secciones) => {
+		// console.log(secciones)
 
 	}
 }

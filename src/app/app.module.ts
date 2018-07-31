@@ -51,6 +51,9 @@ import {
 import {
 	AutopistasProvider
 } from '../providers/aplicacion/autopistas'
+import {
+	SeccionesProvider
+} from '../providers/aplicacion/secciones'
 
 import {
 	TramosProvider
@@ -96,7 +99,8 @@ import {
 		AutopistasProvider,
 		TramosApiProvider,
 		TramosProvider,
-		SeccionesApiProvider
+		SeccionesApiProvider,
+		SeccionesProvider
 	]
 })
 export class AppModule {}

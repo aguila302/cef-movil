@@ -11,9 +11,8 @@ export class TramosProvider {
 
 	constructor(private databaseProvider: DatabaseProvider) {}
 
-
 	/* Registrar tramos en el origen de datos. */
-	registrarTramos = (tramos) => {
-		return this.databaseProvider.registrarTramos(tramos)
+	registrarTramos = (autopistaId: number, tramos) => {
+		return this.databaseProvider.registrarTramos(autopistaId, tramos)
 	}
 }
