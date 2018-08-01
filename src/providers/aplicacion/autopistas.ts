@@ -11,7 +11,6 @@ export class AutopistasProvider {
 
 	constructor(private databaseProvider: DatabaseProvider) {}
 
-
 	/* Registrar autopistas en el origen de datos. */
 	registrarAutopistas = (usuario, response) => {
 		return this.databaseProvider.registrarAutopistas(usuario, response)

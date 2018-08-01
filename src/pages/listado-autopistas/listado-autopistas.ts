@@ -57,8 +57,8 @@ export class ListadoAutopistasPage {
 	}
 
 	/* Resolver al endpoint del api para obtener el listado de autopistas. */
-	obtenerAutopistasApi = () => {
-		/* Crear un loager en espera para la descarga de los catalogos al endpoint del api. */
+	async obtenerAutopistasApi() {
+		/* Crear un loager en saber cuando termina unespera para la descarga de los catalogos al endpoint del api. */
 		let loader = this.loading.create({
 			spinner: 'circles',
 			content: 'Descargando la información, por favor espera',
@@ -68,52 +68,37 @@ export class ListadoAutopistasPage {
 
 		/* Obtener datos del usuario conectado. */
 		this.storage.get('auth').then((usuario) => {
+			/* Obtener autopistas de un usuario al endpoint del api. */
 			this.autopistasApi.obtenerAutopistas(usuario).then((autopistasDelApi) => {
-				/* Registrar autopistas en el origen de datos. */
-				this.autopistasProvider.registrarAutopistas(usuario, autopistasDelApi).then((autopistasRegistradas) => {
-					autopistasRegistradas.map((item) => {
-						/* Obtener listado de tramos por autopistas al endpoint del api. */
-						this.tramosApi.obtenerTramos(usuario, item.id).then((tramosDelApi) => {
-							// console.log(tramosDelApi)
-							/* Registrar tramos en el origen de datos. */
-							this.tramosProvider.registrarTramos(item.insert_id, tramosDelApi)
-							// .then((tramosInsertados) => {
+				autopistasDelApi.data.data.map((autopista) => {
+					/* Registrar autopistas en el origen de datos. */
+					this.autopistasProvider.registrarAutopistas(usuario, autopista)
+						.then((autopistasRegistradas) => {
+							/* Obtener listado de tramos por autopistas al endpoint del api. */
+							this.tramosApi.obtenerTramos(usuario, autopista.id).then((tramosDelApi) => {
+								tramosDelApi.data.data.map((tramo) => {
+									/* Registrar tramos en el origen de datos. */
+									this.tramosProvider.registrarTramos(autopistasRegistradas.insert_id, tramo)
+										.then((tramosRegistrados) => {
+											/* Descarga el catalogo de secciones al endpoint del api. */
+											this.seccionesApiProvider.obtenerSecciones(autopista.id, tramo.id, usuario)
+												.then((seccionesDelApi) => {
+													seccionesDelApi.data.data.map((seccion) => {
+														this.seccionesProvider.registrarSecciones(
+															autopistasRegistradas,
+															tramosRegistrados,
+															seccion
+														)
+													})
+													this.autopistas.push(autopistasRegistradas)
 
-							// tramos.data.data.map((item) => {
-							// 	/* Descarga el catalogo de secciones al endpoint del api. */
-							// 	this.seccionesApiProvider.obtenerSecciones(item.autopista_id, item.id, usuario)
-							// 		.then((secciones) => {
-							// 			secciones.data.data.map((item) => {
-							// 				// console.log(item);
-
-							// 			})
-							// 			this.seccionesProvider.registrarSecciones(secciones)
-							// 		})
-
-							// })
-							// setTimeout(() => {
-							// 	this.zone.run(() => {
-							// 		this.autopistas = response
-							// 	})
-							// 	loader.dismiss()
-							// }, 6000)
-							// })
+												})
+										})
+								})
+							})
 						})
-					})
+					loader.dismiss()
 				})
-				// response.data.data.map((autopistas) => {
-				// 	this.tramosApi.obtenerTramos(usuario, autopistas.id).then((response) => {
-				// 		// console.log(response.data.data);
-				// 		response.data.data.map((tramos) => {
-				// 			this.seccionesApiProvider.obtenerSecciones(autopistas.id, tramos.id, usuario)
-				// 				.then((secciones) => {
-				// 					console.log(secciones)
-				// 					//this.autopistasProvider.registrarAutopistas(usuario, secciones.data.data)
-				// 				})
-
-				// 		})
-				// 	})
-				// })
 
 			}).catch((error) => {
 				console.error.bind(error)
@@ -121,6 +106,14 @@ export class ListadoAutopistasPage {
 		}).catch((error) => {
 			console.error.bind(error)
 		})
+		/* Descarga el catalogo de cuerpos al endpoint del api. */
+		await this.descargarCuerpos()
+	}
+
+	/* Descarga el catalogo de cuerpos al endpoint del api. */
+	descargarCuerpos() {
+		console.log('cuerpos')
+
 	}
 
 	/* Obtener un listado de autopistas de un usuario en el origen de datros. */

@@ -10,7 +10,10 @@ import {
 } from '@ionic-native/sqlite';
 import {
 	BehaviorSubject
-} from 'rxjs/BehaviorSubject';
+} from 'rxjs/BehaviorSubject'
+import {
+	SQLitePorter
+} from '@ionic-native/sqlite-porter';
 
 
 @Injectable()
@@ -22,7 +25,7 @@ export class DatabaseProvider {
 	/**
 	 * Inicializar el origen de datos.
 	 */
-	constructor(private platform: Platform, private sqlite: SQLite) {
+	constructor(private platform: Platform, private sqlite: SQLite, private sqlitePorter: SQLitePorter) {
 		this.platform.ready().then(() => {
 			this.sqlite.create({
 				name: 'cef.db',
@@ -41,6 +44,15 @@ export class DatabaseProvider {
 				/* Diseñar las tablas del origen de datos. */
 				this.crearTablas().then((res) => {
 					this.dbReady.next(true)
+
+					/* Exportamos el origen de datos a sql. */
+					this.sqlitePorter.exportDbToSql(this.database)
+						.then((sql) => {
+							console.log(sql)
+						})
+						.catch(e => {
+							console.error(e)
+						})
 				})
 			})
 
@@ -152,20 +164,18 @@ export class DatabaseProvider {
 	}
 
 	/* Registrar autopistas en el origen de datos. */
-	registrarAutopistas(usuario, response) {
+	registrarAutopistas(usuario, item) {
 		return this.isReady()
 			.then(() => {
-				for (let item of response.data.data) {
-					let sql = `insert into autopistas (autopista_id, descripcion, cadenamiento_inicial_km, cadenamiento_inicial_m, cadenamiento_final_km,
-							cadenamiento_final_m, user_id) values (?,?,?,?,?,?,?);`
+				let sql = `insert into autopistas (autopista_id, descripcion, cadenamiento_inicial_km, cadenamiento_inicial_m, cadenamiento_final_km,
+                            cadenamiento_final_m, user_id) values (?,?,?,?,?,?,?);`
 
-					this.database.executeSql(sql, [item.id, item.descripcion, item.cadenamiento_inicial_km, item.cadenamiento_inicial_m,
-						item.cadenamiento_final_km, item.cadenamiento_final_m, usuario.usuario_id
-					]).then((id) => {
-						item['insert_id'] = id.insertId
-					})
-				}
-				return Promise.resolve(response.data.data)
+				return this.database.executeSql(sql, [item.id, item.descripcion, item.cadenamiento_inicial_km, item.cadenamiento_inicial_m,
+					item.cadenamiento_final_km, item.cadenamiento_final_m, usuario.usuario_id
+				]).then((id) => {
+					item['insert_id'] = id.insertId
+					return item
+				})
 			})
 	}
 
@@ -186,29 +196,36 @@ export class DatabaseProvider {
 
 	/* Registrar tramos en el origen de datos. */
 	registrarTramos = (autopistas, tramos) => {
-		console.log(autopistas)
-		console.log(tramos)
-
-
-		// let paramettros = [data.id, data.cadenamiento_inicial_km, data.cadenamiento_inicial_m,
-		// 	data.cadenamiento_final_km, data.cadenamiento_final_m, data.insert_id
-		// ]
-		// return this.isReady()
-		// 	.then(() => {
-		// 		return this.database.executeSql(`insert into tramos (autopista_id_api, cadenamiento_inicial_km, cadenamiento_inicial_m,
-		// 			cadenamiento_final_km, cadenamiento_final_m, autopista_id_movil)
-		//                   values(?,?,?,?,?,?)`, paramettros).then((id) => {
-
-		// 			data['tramo_insert_id'] = id.insertId
-		// 			return data
-		// 		})
-		// 	})
+		let parametros = [tramos.autopista_id, tramos.cadenamiento_inicial_km, tramos.cadenamiento_inicial_m,
+			tramos.cadenamiento_final_km, tramos.cadenamiento_final_m, autopistas
+		]
+		return this.isReady()
+			.then(() => {
+				return this.database.executeSql(`insert into tramos (autopista_id_api, cadenamiento_inicial_km,
+                    cadenamiento_inicial_m, cadenamiento_final_km, cadenamiento_final_m, autopista_id_movil)
+                    values(?,?,?,?,?,?)`, parametros)
+					.then((id) => {
+						tramos['insert_id'] = id.insertId
+						return tramos
+					})
+			})
 
 	}
 
 	/* Registra las secciones en el origen de datos. */
-	registrarSecciones = (secciones) => {
-		// console.log(secciones)
-
+	registrarSecciones = (autopista, tramo, secciones) => {
+		let paramettros = [secciones.cadenamiento_inicial_km, secciones.cadenamiento_inicial_m,
+			secciones.cadenamiento_final_km, secciones.cadenamiento_final_m, autopista.id, autopista.insert_id,
+			tramo.id, tramo.insert_id
+		]
+		return this.isReady()
+			.then(() => {
+				return this.database.executeSql(`insert into secciones (cadenamiento_inicial_km, cadenamiento_inicial_m,
+                    cadenamiento_final_km, cadenamiento_final_m, autopista_id_api, autopista_id_movil, tramo_id_api,
+                    tramo_id_movil) values(?,?,?,?,?,?,?,?)`, paramettros).then((id) => {
+					secciones['insert_id'] = id.insertId
+					return secciones
+				})
+			})
 	}
 }

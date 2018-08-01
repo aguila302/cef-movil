@@ -63,7 +63,10 @@ import {
 } from '../providers/tramos-api/tramos-api';
 import {
 	SeccionesApiProvider
-} from '../providers/secciones-api/secciones-api';
+} from '../providers/secciones-api/secciones-api'
+import {
+	SQLitePorter
+} from '@ionic-native/sqlite-porter';
 
 @NgModule({
 	declarations: [
@@ -100,7 +103,8 @@ import {
 		TramosApiProvider,
 		TramosProvider,
 		SeccionesApiProvider,
-		SeccionesProvider
+		SeccionesProvider,
+		SQLitePorter
 	]
 })
 export class AppModule {}

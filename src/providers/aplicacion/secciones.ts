@@ -12,7 +12,7 @@ export class SeccionesProvider {
 	constructor(private databaseProvider: DatabaseProvider) {}
 
 	/* Registrar secciones en el origen de datos. */
-	registrarSecciones = (secciones) => {
-		return this.databaseProvider.registrarSecciones(secciones.data.data)
+	registrarSecciones = (autopista, tramo, secciones) => {
+		return this.databaseProvider.registrarSecciones(autopista, tramo, secciones)
 	}
 }
