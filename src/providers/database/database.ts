@@ -46,13 +46,13 @@ export class DatabaseProvider {
 					this.dbReady.next(true)
 
 					/* Exportamos el origen de datos a sql. */
-					this.sqlitePorter.exportDbToSql(this.database)
-						.then((sql) => {
-							console.log(sql)
-						})
-						.catch(e => {
-							console.error(e)
-						})
+					// this.sqlitePorter.exportDbToSql(this.database)
+					// 	.then((sql) => {
+					// 		console.log(sql)
+					// 	})
+					// 	.catch(e => {
+					// 		console.error(e)
+					// 	})
 				})
 			})
 
@@ -102,8 +102,15 @@ export class DatabaseProvider {
                         tramo_id_api INTEGER,
                         tramo_id_movil INTEGER,
                         FOREIGN KEY(tramo_id_movil) REFERENCES tramos(id),
-						FOREIGN KEY(autopista_id_movil) REFERENCES autopistas(id));
-		`)
+						FOREIGN KEY(autopista_id_movil) REFERENCES autopistas(id));`)
+			tx.executeSql(`CREATE TABLE IF NOT EXISTS cuerpos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                descripcion TEXT,
+                cuerpo_id_api INTEGER);`)
+			tx.executeSql(`CREATE TABLE IF NOT EXISTS elementos_generales_camino (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                descripcion TEXT,
+                elemento_general_id_api INTEGER);`)
 		})
 	}
 
@@ -225,6 +232,27 @@ export class DatabaseProvider {
                     tramo_id_movil) values(?,?,?,?,?,?,?,?)`, paramettros).then((id) => {
 					secciones['insert_id'] = id.insertId
 					return secciones
+				})
+			})
+	}
+
+	/* Registrar cuerpos en el origen de datos. */
+	registrarCuerpos = (cuerpos) => {
+		return this.isReady()
+			.then(() => {
+				let sql = `insert into cuerpos(descripcion, cuerpo_id_api) values (?,?);`
+				return this.database.executeSql(sql, [cuerpos.descripcion, cuerpos.id])
+			})
+
+	}
+
+	/* Registrar elementos generales en el origen de datos. */
+	registrarElementosGenerales = (data) => {
+		return this.isReady()
+			.then(() => {
+				let sql = `insert into elementos_generales_camino(descripcion, elemento_general_id_api) values (?,?);`
+				return this.database.executeSql(sql, [data.descripcion, data.id]).then((row) => {
+					return row.insertId
 				})
 			})
 	}
