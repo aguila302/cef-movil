@@ -56,7 +56,7 @@ export class CatalogosProvider {
 	}
 
 	/* Registrar valores ponderados en el origen de datos. */
-	registrarValoresPonderados = (cuerpos) => {
-		return this.databaseProvider.registrarCuerpos(cuerpos)
+	registrarValoresPonderados = (valoresPonderados) => {
+		return this.databaseProvider.registrarValoresPonderados(valoresPonderados)
 	}
 }

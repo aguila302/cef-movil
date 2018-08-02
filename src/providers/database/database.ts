@@ -111,6 +111,12 @@ export class DatabaseProvider {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 descripcion TEXT,
                 elemento_general_id_api INTEGER);`)
+
+			tx.executeSql(`CREATE TABLE IF NOT EXISTS valores_ponderados (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                valor_ponderado FLOAT,
+                elemento_general_id_api INTEGER,
+                elemento_general_id_movil INTEGER);`)
 		})
 	}
 
