@@ -11,14 +11,23 @@ export class AutopistasProvider {
 
 	constructor(private databaseProvider: DatabaseProvider) {}
 
-	/* Registrar autopistas en el origen de datos. */
-	registrarAutopistas = (usuario, response) => {
-		return this.databaseProvider.registrarAutopistas(usuario, response)
-	}
-
 	/* Obtener autopistas asignadas a un usuario. */
 	obtenerAutopistasOrigenDeDatos = (usuario) => {
 		return this.databaseProvider.obtenerAutopistasPorUsuario(usuario.usuario_id)
 	}
 
+	/* Obtener listado de elementos del origen de datos. */
+	obtenerElementos = () => {
+		return this.databaseProvider.obtenerElementos()
+	}
+
+	/* Obtener listado de cuerpos del origen de datos. */
+	obtenerCuerpos = () => {
+		return this.databaseProvider.obtenerCuerpos()
+	}
+
+	/* Obtener listado de secciones del origen de datos. */
+	obtenerSecciones = (autopista) => {
+		return this.databaseProvider.obtenerSecciones(autopista)
+	}
 }

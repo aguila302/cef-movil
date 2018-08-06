@@ -45,29 +45,14 @@ import {
 import {
 	IonicStorageModule
 } from '@ionic/storage'
-import {
-	AutopistasApiProvider
-} from '../providers/autopistas-api/autopistas-api';
-import {
-	AutopistasProvider
-} from '../providers/aplicacion/autopistas'
-import {
-	SeccionesProvider
-} from '../providers/aplicacion/secciones'
-
-import {
-	TramosProvider
-} from '../providers/aplicacion/tramos';
 
 import {
 	CatalogosProvider
 } from '../providers/aplicacion/catalogos';
+
 import {
-	TramosApiProvider
-} from '../providers/tramos-api/tramos-api';
-import {
-	SeccionesApiProvider
-} from '../providers/secciones-api/secciones-api'
+	AutopistasProvider
+} from '../providers/aplicacion/autopistas'
 import {
 	SQLitePorter
 } from '@ionic-native/sqlite-porter';
@@ -92,7 +77,6 @@ import {
 		MyApp,
 		HomePage,
 		ListPage,
-		// ListadoAutopistasPage
 	],
 	providers: [
 		StatusBar,
@@ -105,15 +89,10 @@ import {
 		SQLite,
 		DatabaseProvider,
 		AuthProvider,
-		AutopistasApiProvider,
-		AutopistasProvider,
-		TramosApiProvider,
-		TramosProvider,
-		SeccionesApiProvider,
-		SeccionesProvider,
 		SQLitePorter,
 		CatalogosApiProvider,
-		CatalogosProvider
+		CatalogosProvider,
+		AutopistasProvider
 	]
 })
 export class AppModule {}

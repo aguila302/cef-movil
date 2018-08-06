@@ -1,0 +1,56 @@
+<!--
+  Generated template for the RegistrarCalificacionPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+    <ion-navbar color="primary">
+        <ion-title>Registrar calificación</ion-title>
+    </ion-navbar>
+</ion-header>
+<ion-content padding>
+    <form #filtroForm="ngForm" novalidate>
+        <ion-list no-lines>
+            <ion-item>
+                <ion-label stacked color="primary">Cuerpo</ion-label>
+                <ion-select [(ngModel)]="filtro.cuerpo" name="cuerpo" #cuerpo="ngModel" required okText="Aceptar" cancelText="Cancelar">
+                    <ion-option *ngFor="let cuerpo of cuerpos" [value]="cuerpo">
+                        {{ cuerpo.descripcion }}
+                    </ion-option>
+                </ion-select>
+            </ion-item>
+            <p ion-text [hidden]="cuerpo.valid" color="danger" padding-left *ngIf="cuerpo.invalid && (cuerpo.dirty || cuerpo.touched)">
+                El cuerpo es obligatorio.
+            </p>
+            <ion-item>
+                <ion-label stacked color="primary">Sección</ion-label>
+                <ion-select [(ngModel)]="filtro.seccion" name="seccion" #seccion="ngModel" required okText="Aceptar" cancelText="Cancelar">
+                    <ion-option *ngFor="let seccion of secciones" [value]="seccion">
+                        {{ seccion.cadenamiento_inicial_km }} - {{ seccion.cadenamiento_inicial_km }}
+                    </ion-option>
+                </ion-select>
+            </ion-item>
+            <p ion-text [hidden]="cuerpo.valid" color="danger" padding-left *ngIf="cuerpo.invalid && (cuerpo.dirty || cuerpo.touched)">
+                El cuerpo es obligatorio.
+            </p>
+        </ion-list>
+    </form>
+    <!-- <ion-item>
+        <ion-label>Cuerpo</ion-label>
+        <ion-select [(ngModel)]="cuerpo" okText="Aceptar" cancelText="Cancelar">
+            <ion-option *ngFor="let cuerpo of cuerpos" [value]="cuerpo">
+                {{ cuerpo.descripcion }}
+            </ion-option>
+        </ion-select>
+    </ion-item> -->
+    <hr>
+    <ion-item-group>
+        <ion-item>
+            sdcsd
+        </ion-item>
+        <ion-item-divider text-wrap color="light" *ngFor="let elemento of elementos">
+            {{ elemento.descripcion }}
+        </ion-item-divider>
+    </ion-item-group>
+</ion-content>

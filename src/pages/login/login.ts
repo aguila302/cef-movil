@@ -68,7 +68,8 @@ export class LoginPage {
 				content: 'Por favor espera',
 			})
 			/* Mostrar loager en espera. */
-			loader.present();
+			loader.present()
+
 			this.authProvider.obtenerTokenAcceso(form.form.controls)
 				.then((response) => {
 					/* Cerrar el loager en espera. */
