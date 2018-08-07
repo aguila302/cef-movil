@@ -76,7 +76,7 @@ export class LoginPage {
 					setTimeout(() => {
 						loader.dismiss()
 						response.status === 200 ? (this.registrarToken(response)) : (this.muestraError(response))
-					}, 5000)
+					}, 6000)
 
 				}).catch((error) => {
 					console.error.bind(error)

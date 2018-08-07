@@ -30,4 +30,19 @@ export class AutopistasProvider {
 	obtenerSecciones = (autopista) => {
 		return this.databaseProvider.obtenerSecciones(autopista)
 	}
+
+	/* Obtener defectos por elementos en el origen de datos. */
+	obtenerefectos = (elemento) => {
+		return this.databaseProvider.obtenerDefectosPorElemento(elemento)
+	}
+
+	/* Obtener un listado de intensidades por elemento en el origen de datos. */
+	obtenerIntensidades = (elemento: number) => {
+		return this.databaseProvider.obtenerIntensidades(elemento)
+	}
+
+	/* Obtener un listado de rangis por defecto y por intensidad en el origen de datos. */
+	obtenerRangos = (defecto, intensidad) => {
+		return this.databaseProvider.obtenerRangos(defecto, intensidad)
+	}
 }

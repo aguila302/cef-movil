@@ -34,10 +34,10 @@ export class DatabaseProvider {
 				this.database = db
 
 				// this.sqlite.deleteDatabase({
-				//     name: 'cef.db',
-				//     location: 'default'
+				// 	name: 'cef.db',
+				// 	location: 'default'
 				// }).then(() => {
-				//     console.log('databa se eleimanda')
+				// 	console.log('databa se eleimanda')
 
 				// })
 
@@ -238,8 +238,6 @@ export class DatabaseProvider {
 			.then(() => {
 				return this.database.executeSql(`select * from autopistas WHERE user_id = ${userId}`, [])
 					.then((data) => {
-						console.log(data)
-
 						let autopistas = []
 						for (let i = 0; i < data.rows.length; i++) {
 							autopistas.push(data.rows.item(i))
@@ -351,20 +349,6 @@ export class DatabaseProvider {
 			})
 	}
 
-	/* Obtener listado de elementos del origen de datos. */
-	obtenerElementos = () => {
-		return this.isReady()
-			.then(() => {
-				return this.database.executeSql(`select * from elementos order by 2 ASC`, []).then((elementos) => {
-					let listaElementos = []
-					for (let i = 0; i < elementos.rows.length; i++) {
-						listaElementos.push(elementos.rows.item(i));
-					}
-					return listaElementos
-				})
-			})
-	}
-
 	/* Obtener listado de cuerpos del origen de datos. */
 	obtenerCuerpos = () => {
 		return this.isReady()
@@ -381,10 +365,9 @@ export class DatabaseProvider {
 
 	/* Obtener listado de secciones del origen de datos. */
 	obtenerSecciones = (autopista) => {
-
 		return this.isReady()
 			.then(() => {
-				return this.database.executeSql(`select * from secciones where autopista_id = ?`, [autopista.id])
+				return this.database.executeSql(`select * from secciones where autopista_id = ?`, [autopista])
 					.then((secciones) => {
 						let listaSecciones = []
 						for (let i = 0; i < secciones.rows.length; i++) {
@@ -393,5 +376,73 @@ export class DatabaseProvider {
 						return listaSecciones
 					})
 			})
+	}
+
+	/* Obtener listado de elementos del origen de datos. */
+	obtenerElementos = () => {
+		return this.isReady()
+			.then(() => {
+				return this.database.executeSql(`select * from elementos order by 2 ASC`, []).then((elementos) => {
+					let listaElementos = []
+					let defectos = []
+					for (let i = 0; i < elementos.rows.length; i++) {
+						listaElementos.push({
+							id: elementos.rows.item(i).id,
+							descripcion: elementos.rows.item(i).descripcion,
+							elemento_id_api: elementos.rows.item(i).elemento_id_api,
+							valor_ponderado_id: elementos.rows.item(i).valor_ponderado_id,
+
+						})
+
+					}
+					return listaElementos
+				})
+			})
+	}
+
+	/* Obtener defectos por elementos en el origen de datos. */
+	obtenerDefectosPorElemento = (elemento) => {
+		return this.isReady()
+			.then(() => {
+				return this.database.executeSql(`select * from defectos where elemento_id = ?`, [elemento])
+					.then((defectos) => {
+						let listaDefectos = []
+						for (let i = 0; i < defectos.rows.length; i++) {
+							listaDefectos.push({
+								id: defectos.rows.item(i).id,
+								descripcion: defectos.rows.item(i).descripcion
+							})
+						}
+						return listaDefectos
+					})
+			})
+	}
+
+	/* Obtener un listado de intensidades por elemento en el origen de datos. */
+	obtenerIntensidades = (elemento) => {
+		return this.isReady()
+			.then(() => {
+				return this.database.executeSql(`select * from intensidades WHERE elemento_id = ${elemento} order by 2 ASC`, [])
+					.then((data) => {
+						let intensidades = []
+						for (let i = 0; i < data.rows.length; i++) {
+							intensidades.push(data.rows.item(i))
+						}
+						return intensidades
+					})
+			})
+	}
+
+	/* Obtener rangos por defecto y por intensidad en el origen de datos. */
+	obtenerRangos = (defecto, intensidad) => {
+		return this.isReady().then(() => {
+			return this.database.executeSql(`select * from rangos where defecto_id = ? and intensidad_id = ?`, [defecto, intensidad]).then((rangos) => {
+				let listaDeRangos = []
+				for (let i = 0; i < rangos.rows.length; i++) {
+					listaDeRangos.push(rangos.rows.item(i))
+				}
+				return listaDeRangos
+			})
+		})
 	}
 }

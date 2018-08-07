@@ -65,7 +65,6 @@ import {
 		MyApp,
 		HomePage,
 		ListPage,
-		// ListadoAutopistasPage
 	],
 	imports: [
 		BrowserModule,

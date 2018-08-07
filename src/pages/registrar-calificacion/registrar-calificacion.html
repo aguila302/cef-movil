@@ -27,30 +27,29 @@
                 <ion-label stacked color="primary">Sección</ion-label>
                 <ion-select [(ngModel)]="filtro.seccion" name="seccion" #seccion="ngModel" required okText="Aceptar" cancelText="Cancelar">
                     <ion-option *ngFor="let seccion of secciones" [value]="seccion">
-                        {{ seccion.cadenamiento_inicial_km }} - {{ seccion.cadenamiento_inicial_km }}
+                        {{ seccion.cadenamiento_inicial_km }} - {{ seccion.cadenamiento_inicial_m }} + {{ seccion.cadenamiento_final_km }} - {{ seccion.cadenamiento_final_m }}
                     </ion-option>
                 </ion-select>
             </ion-item>
-            <p ion-text [hidden]="cuerpo.valid" color="danger" padding-left *ngIf="cuerpo.invalid && (cuerpo.dirty || cuerpo.touched)">
-                El cuerpo es obligatorio.
+            <p ion-text [hidden]="seccion.valid" color="danger" padding-left *ngIf="seccion.invalid && (seccion.dirty || seccion.touched)">
+                La sección es obligatorio.
             </p>
         </ion-list>
+        <ion-row responsive-sm>
+            <ion-col>
+                <button large ion-button (click)="activarComponente(filtroForm)" type="submit" block [disabled]="filtroForm.invalid">
+                    Comenzar
+                </button>
+            </ion-col>
+        </ion-row>
     </form>
-    <!-- <ion-item>
-        <ion-label>Cuerpo</ion-label>
-        <ion-select [(ngModel)]="cuerpo" okText="Aceptar" cancelText="Cancelar">
-            <ion-option *ngFor="let cuerpo of cuerpos" [value]="cuerpo">
-                {{ cuerpo.descripcion }}
-            </ion-option>
-        </ion-select>
-    </ion-item> -->
     <hr>
-    <ion-item-group>
-        <ion-item>
-            sdcsd
-        </ion-item>
-        <ion-item-divider text-wrap color="light" *ngFor="let elemento of elementos">
+    <ion-item-group *ngFor="let elemento of elementos">
+        <ion-item-divider text-wrap color="light">
             {{ elemento.descripcion }}
         </ion-item-divider>
+        <button ion-item text-wrap *ngFor="let defecto of elemento.defectos" [disabled]="submit" (click)="muestraIntensidades(elemento.id, defecto.id)">
+            {{ defecto.descripcion }}
+        </button>
     </ion-item-group>
 </ion-content>

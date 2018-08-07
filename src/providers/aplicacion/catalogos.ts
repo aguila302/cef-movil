@@ -44,9 +44,6 @@ export class CatalogosProvider {
 
 							/* Resolver al endpoint del api para obtener elementos. */
 							this.catalogosApi.obtenerElementos(usuario, valorPonderado.id).then((elementosApi) => {
-								console.log('elementosApi')
-
-								console.log(elementosApi)
 								/* Registramos elementos en el origen de datos. */
 								for (let elemento of elementosApi.data.data) {
 									this.registrarElementos(elemento)

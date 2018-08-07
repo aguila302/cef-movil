@@ -37,7 +37,6 @@ export class ListadoAutopistasPage {
 
 		this.usuario = navParams.get('usuario')
 		this.access_token = navParams.get('access_token')
-		console.log(this.usuario, this.access_token)
 
 	}
 
@@ -63,7 +62,9 @@ export class ListadoAutopistasPage {
 					this.autopistas = response
 				})
 
-				loader.dismiss()
+				setTimeout(() => {
+					loader.dismiss()
+				}, 4000)
 			})
 		}).catch((error) => {
 			console.error.bind(error)
