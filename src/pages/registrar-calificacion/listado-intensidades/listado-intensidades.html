@@ -10,22 +10,39 @@
     </ion-navbar>
 </ion-header>
 <ion-content padding>
-     <ion-item>
-    <ion-range step="10" snaps="true" min="-200" max="200" [(ngModel)]="saturation" color="secondary" (ionChange)="rangoSeleccionado(event)">
-      <ion-label range-left>-200</ion-label>
-      <ion-label range-right>200</ion-label>
-    </ion-range>
-  </ion-item>
-
-    <ion-item-group *ngFor="let intensidad of intensidades">
-        <ion-item-divider text-wrap color="light">
-            {{ intensidad.descripcion }}
-        </ion-item-divider>
-            <ion-item *ngFor="let rango of intensidad.rangos">
-                <ion-range step="1" snaps="true" min="46" max="50" color="secondary" (ionChange)="rangoSeleccionado(event)">
-                    <ion-label range-left>{{ rango.rango_inicial }}</ion-label>
-                    <ion-label range-right>{{ rango.rango_final }}</ion-label>
-                </ion-range>
+    <ion-list radio-group>
+        <ion-item text-wrap *ngFor="let intensidad of intensidades">
+            <ion-label stacked *ngFor="let rango of intensidad.rangos">{{ rango.rango_inicial }} - {{ rango.rango_final }}</ion-label>
+            <ion-label>{{ intensidad.descripcion }}</ion-label>
+            <ion-radio value="{{ intensidad.descripcion }}" (ionSelect)="activarCalificacion(intensidad)"></ion-radio>
+        </ion-item>
+    </ion-list>
+    <form [formGroup]="form" (ngSubmit)="calificar()">
+        <ion-list>
+            <ion-item disabled="disabled">
+                <ion-label floating>Calificación</ion-label>
+                <ion-input formControlName="valorCalificacion" [brmasker]="{mask: '0.00', len:3, decimal: 1}" required
+                max="{{ datosCalificacion.rangoFinal }}" type="number"></ion-input>
             </ion-item>
-    </ion-item-group>
+            <div ion-text color="danger" padding-left *ngIf="valorCalificacion.invalid && (valorCalificacion.dirty || valorCalificacion.touched)">
+
+                <p ion-text color="danger" padding-left *ngIf="valorCalificacion.errors.required">
+                    La calificación es obligatorio. {{ datosCalificacion.rangoInicial }}
+                </p>
+                <p ion-text color="danger" padding-left *ngIf="valorCalificacion.errors.min">
+                    La calificación minima debe ser de {{ datosCalificacion.rangoInicial }}.
+                </p>
+                <!-- <p ion-text color="danger" padding-left *ngIf="valorCalificacion.errors.max">
+                    La calificación maxima debe ser de {{ datosCalificacion.rangoFinal }}.
+                </p> -->
+            </div>
+        </ion-list>
+        <ion-row responsive-sm>
+            <ion-col>
+                <button large ion-button type="submit" block>
+                    Aceptar
+                </button>
+            </ion-col>
+        </ion-row>
+    </form>
 </ion-content>

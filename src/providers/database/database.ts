@@ -38,7 +38,6 @@ export class DatabaseProvider {
 				// 	location: 'default'
 				// }).then(() => {
 				// 	console.log('databa se eleimanda')
-
 				// })
 
 				/* Diseñar las tablas del origen de datos. */

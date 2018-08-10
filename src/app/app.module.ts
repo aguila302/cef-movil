@@ -69,7 +69,8 @@ import {
 	imports: [
 		BrowserModule,
 		IonicModule.forRoot(MyApp),
-		IonicStorageModule.forRoot()
+		IonicStorageModule.forRoot(),
+
 	],
 	bootstrap: [IonicApp],
 	entryComponents: [

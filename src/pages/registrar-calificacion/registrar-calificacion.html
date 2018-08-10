@@ -50,6 +50,9 @@
         </ion-item-divider>
         <button ion-item text-wrap *ngFor="let defecto of elemento.defectos" [disabled]="submit" (click)="muestraIntensidades(elemento.id, defecto.id)">
             {{ defecto.descripcion }}
+            <p ion-text text-right>
+                0.00
+            </p>
         </button>
     </ion-item-group>
 </ion-content>
