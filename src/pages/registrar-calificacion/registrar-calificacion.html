@@ -48,11 +48,25 @@
         <ion-item-divider text-wrap color="light">
             {{ elemento.descripcion }}
         </ion-item-divider>
-        <button ion-item text-wrap *ngFor="let defecto of elemento.defectos" [disabled]="submit" (click)="muestraIntensidades(elemento.id, defecto.id)">
+        <ion-list>
+            <ion-item-sliding #item *ngFor="let defecto of elemento.defectos">
+                <ion-item text-wrap>
+                    {{ defecto.descripcion }}
+                    <p ion-text text-right>
+                        0.00
+                    </p>
+                </ion-item>
+                <ion-item-options side="right">
+                    <button ion-button [disabled]="submit" color="light" (click)="muestraIntensidades(elemento.id, defecto.id)">Intensidad</button>
+                    <button ion-button [disabled]="submit" color="light" (click)="calificarIntensidad()">Calificar</button>
+                </ion-item-options>
+            </ion-item-sliding>
+        </ion-list>
+        <!-- <button ion-item text-wrap *ngFor="let defecto of elemento.defectos" [disabled]="submit" (click)="muestraIntensidades(elemento.id, defecto.id)">
             {{ defecto.descripcion }}
             <p ion-text text-right>
                 0.00
             </p>
-        </button>
+        </button> -->
     </ion-item-group>
 </ion-content>

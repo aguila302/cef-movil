@@ -9,7 +9,8 @@ import {
 import {
 	IonicPage,
 	NavController,
-	NavParams
+	NavParams,
+	ViewController
 } from 'ionic-angular'
 import {
 	AutopistasProvider
@@ -31,38 +32,36 @@ export class ListadoIntensidadesPage {
 	elemento: number = 0
 	defecto: number = 0
 	intensidades = []
-	disabled: boolean = true
+	// disabled: boolean = true
 	form: FormGroup
+	intensidadSeleccionada = {}
 
 	datosCalificacion = {
 		rangoInicial: 0,
 		rangoFinal: 0
 	}
 
-	ngOnInit(): void {
+	/* Al cargar el componente, cargamos el listado de intensidades. */
+	ionViewDidLoad(): void {
 		this.obtenerIntensidades()
 
-		this.form = new FormGroup({
-			valorCalificacion: new FormControl({
-				disabled: true
-			}, Validators.compose([
-				Validators.required,
-				Validators.min(this.datosCalificacion.rangoInicial),
-				Validators.max(this.datosCalificacion.rangoFinal),
-			])),
+		// this.form = new FormGroup({
+		// 	valorCalificacion: new FormControl({
+		// 		disabled: true
+		// 	}, Validators.compose([
+		// 		Validators.required,
+		// 		Validators.min(this.datosCalificacion.rangoInicial),
+		// 		Validators.max(this.datosCalificacion.rangoFinal),
+		// 	])),
 
-		})
+		// })
 	}
 
-	constructor(public navCtrl: NavController, public navParams: NavParams, private autopistasProvider: AutopistasProvider) {
+	constructor(public navCtrl: NavController, public navParams: NavParams, private autopistasProvider: AutopistasProvider,
+		public view: ViewController) {
 		this.elemento = this.navParams.get('elemento')
 		this.defecto = this.navParams.get('defecto')
 	}
-
-	/* Al cargar el componente, cargamos el listado de intensidades. */
-	// ionViewDidLoad() {
-
-	// }
 
 	/* Obtener un listado de intensidades por elemento. */
 	obtenerIntensidades = () => {
@@ -82,21 +81,19 @@ export class ListadoIntensidadesPage {
 		})
 	}
 
-	/* Activar calificacion y obtener rangos de calificación seleccionado. */
-	activarCalificacion = (intensidad) => {
-		this.disabled = false
-		/* Obtener rango inicial y final de la calificacion. */
-		this.datosCalificacion.rangoInicial = intensidad.rangos[0].rango_inicial
-		this.datosCalificacion.rangoFinal = intensidad.rangos[0].rango_final
+	/* Obtener intensidad seleccionado para la calificación. */
+	activarIntensidad = (intensidad) => {
+		this.intensidadSeleccionada = intensidad
 	}
 
-	/* Obtener calificación del elemento. */
-	calificar = () => {
-		console.log(this.form)
+	/* Cerrar el cuadro modal. */
+	cancelar = () => {
+		this.view.dismiss()
 
 	}
 
-	get valorCalificacion() {
-		return this.form.get('valorCalificacion')
+	/* Obtener intensidad a calificar. */
+	aceptar = () => {
+		this.view.dismiss(this.intensidadSeleccionada)
 	}
 }

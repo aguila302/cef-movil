@@ -12,37 +12,21 @@
 <ion-content padding>
     <ion-list radio-group>
         <ion-item text-wrap *ngFor="let intensidad of intensidades">
-            <ion-label stacked *ngFor="let rango of intensidad.rangos">{{ rango.rango_inicial }} - {{ rango.rango_final }}</ion-label>
+            <!-- <ion-label stacked *ngFor="let rango of intensidad.rangos">{{ rango.rango_inicial }} - {{ rango.rango_final }}</ion-label> -->
             <ion-label>{{ intensidad.descripcion }}</ion-label>
-            <ion-radio value="{{ intensidad.descripcion }}" (ionSelect)="activarCalificacion(intensidad)"></ion-radio>
+            <ion-radio value="{{ intensidad.descripcion }}" (ionSelect)="activarIntensidad(intensidad)"></ion-radio>
         </ion-item>
-    </ion-list>
-    <form [formGroup]="form" (ngSubmit)="calificar()">
-        <ion-list>
-            <ion-item disabled="disabled">
-                <ion-label floating>Calificación</ion-label>
-                <ion-input formControlName="valorCalificacion" [brmasker]="{mask: '0.00', len:3, decimal: 1}" required
-                max="{{ datosCalificacion.rangoFinal }}" type="number"></ion-input>
-            </ion-item>
-            <div ion-text color="danger" padding-left *ngIf="valorCalificacion.invalid && (valorCalificacion.dirty || valorCalificacion.touched)">
-
-                <p ion-text color="danger" padding-left *ngIf="valorCalificacion.errors.required">
-                    La calificación es obligatorio. {{ datosCalificacion.rangoInicial }}
-                </p>
-                <p ion-text color="danger" padding-left *ngIf="valorCalificacion.errors.min">
-                    La calificación minima debe ser de {{ datosCalificacion.rangoInicial }}.
-                </p>
-                <!-- <p ion-text color="danger" padding-left *ngIf="valorCalificacion.errors.max">
-                    La calificación maxima debe ser de {{ datosCalificacion.rangoFinal }}.
-                </p> -->
-            </div>
-        </ion-list>
         <ion-row responsive-sm>
-            <ion-col>
-                <button large ion-button type="submit" block>
+            <ion-col col-6>
+                <button large ion-button block (click)="cancelar()">
+                    Cancelar
+                </button>
+            </ion-col>
+            <ion-col col-6>
+                <button large ion-button block (click)="aceptar()">
                     Aceptar
                 </button>
             </ion-col>
         </ion-row>
-    </form>
+    </ion-list>
 </ion-content>

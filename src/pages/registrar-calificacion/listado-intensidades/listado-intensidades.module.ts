@@ -1,8 +1,4 @@
 import {
-	BrMaskerModule
-} from 'brmasker-ionic-3'
-
-import {
 	NgModule
 } from '@angular/core';
 import {
@@ -18,7 +14,6 @@ import {
 	],
 	imports: [
 		IonicPageModule.forChild(ListadoIntensidadesPage),
-		BrMaskerModule
 	],
 	exports: [
 		ListadoIntensidadesPage

@@ -4,13 +4,13 @@ import {
 
 import {
 	Component,
-
 } from '@angular/core'
 import {
 	IonicPage,
 	NavController,
 	NavParams,
-	ModalController
+	ModalController,
+	AlertController
 } from 'ionic-angular'
 import {
 	AutopistasProvider
@@ -41,7 +41,7 @@ export class RegistrarCalificacionPage {
 	submit: boolean = true
 
 	constructor(public navCtrl: NavController, public navParams: NavParams,
-		private autopistasProvider: AutopistasProvider, public modal: ModalController) {
+		private autopistasProvider: AutopistasProvider, public modal: ModalController, private alert: AlertController) {
 
 		/* Obtener información de la autopista actual. */
 		this.autopistaId = this.navParams.get('autopista').autopista_id_api
@@ -85,6 +85,28 @@ export class RegistrarCalificacionPage {
 			elemento: elemento,
 			defecto: defecto
 		})
+
+		/*Al cerrar el cuadro modal obtener valores seleccionado. */
+		modalIntensidades.onDidDismiss((intensidad) => {
+			intensidad ? this.calificarIntensidad(intensidad) : ''
+		});
+
+		/* Mostrar el cuadro modal. */
 		modalIntensidades.present()
+	}
+
+	/* Calificar intensidad seleccionada. */
+	calificarIntensidad = (intensidad) => {
+		let modalCalificcion = this.modal.create('CalificarIntensidadPage', {
+			intensidad
+		})
+
+		/*Al cerrar el cuadro modal obtener valores seleccionado. */
+		modalCalificcion.onDidDismiss(data => {
+			console.log(data);
+		});
+
+		/* Mostrar el cuadro modal. */
+		modalCalificcion.present()
 	}
 }
