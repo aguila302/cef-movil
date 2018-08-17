@@ -34,10 +34,10 @@ export class DatabaseProvider {
 				this.database = db
 
 				// this.sqlite.deleteDatabase({
-				// 	name: 'cef.db',
-				// 	location: 'default'
+				//     name: 'cef.db',
+				//     location: 'default'
 				// }).then(() => {
-				// 	console.log('databa se eleimanda')
+				//     console.log('databa se eleimanda')
 				// })
 
 				/* Diseñar las tablas del origen de datos. */
@@ -148,15 +148,19 @@ export class DatabaseProvider {
                 descripcion TEXT,
                 intensidad_id_api INTEGER,
                 elemento_id INTEGER,
+                defecto_id INTEGER,
+                FOREIGN KEY(defecto_id) REFERENCES defectos(id),
                 FOREIGN KEY(elemento_id) REFERENCES elementos(id));`)
 
 			tx.executeSql(`CREATE TABLE IF NOT EXISTS rangos (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 rango_inicial FLOAT,
                 rango_final FLOAT,
+                elemento_id INTEGER,
                 defecto_id INTEGER,
                 intensidad_id INTEGER,
                 rango_id_api INTEGER,
+                FOREIGN KEY(elemento_id) REFERENCES elementos(id),
                 FOREIGN KEY(defecto_id) REFERENCES defectos(id),
                 FOREIGN KEY(intensidad_id) REFERENCES intensidades(id));`)
 		})
@@ -222,10 +226,10 @@ export class DatabaseProvider {
 	registrarAutopistas(usuario, item) {
 		return this.isReady()
 			.then(() => {
-				let sql = `insert into autopistas (descripcion, cadenamiento_inicial_km, cadenamiento_inicial_m, cadenamiento_final_km,
-                            cadenamiento_final_m, autopista_id_api, user_id) values (?,?,?,?,?,?,?);`
+				let sql = `insert into autopistas (id, descripcion, cadenamiento_inicial_km, cadenamiento_inicial_m, cadenamiento_final_km,
+                            cadenamiento_final_m, autopista_id_api, user_id) values (?,?,?,?,?,?,?,?);`
 
-				return this.database.executeSql(sql, [item.descripcion, item.cadenamiento_inicial_km, item.cadenamiento_inicial_m,
+				return this.database.executeSql(sql, [item.id, item.descripcion, item.cadenamiento_inicial_km, item.cadenamiento_inicial_m,
 					item.cadenamiento_final_km, item.cadenamiento_final_m, item.id, usuario.usuario_id
 				])
 			})
@@ -248,30 +252,29 @@ export class DatabaseProvider {
 
 	/* Registrar tramos en el origen de datos. */
 	registrarTramos = (tramos) => {
-		let parametros = [tramos.cadenamiento_inicial_km, tramos.cadenamiento_inicial_m,
+		let parametros = [tramos.id, tramos.cadenamiento_inicial_km, tramos.cadenamiento_inicial_m,
 			tramos.cadenamiento_final_km, tramos.cadenamiento_final_m, tramos.id, tramos.autopista_id
 		]
 		return this.isReady()
 			.then(() => {
-				return this.database.executeSql(`insert into tramos (cadenamiento_inicial_km,
+				return this.database.executeSql(`insert into tramos (id, cadenamiento_inicial_km,
                     cadenamiento_inicial_m, cadenamiento_final_km, cadenamiento_final_m, tramo_id_api, autopista_id)
-                    values(?,?,?,?,?,?)`, parametros)
+                    values(?,?,?,?,?,?,?)`, parametros)
 			})
 
 	}
 
 	/* Registra las secciones en el origen de datos. */
 	registrarSecciones = (autopista, tramo, secciones) => {
-
-		let parametros = [secciones.cadenamiento_inicial_km, secciones.cadenamiento_inicial_m,
+		let parametros = [secciones.id, secciones.cadenamiento_inicial_km, secciones.cadenamiento_inicial_m,
 			secciones.cadenamiento_final_km, secciones.cadenamiento_final_m, secciones.id, autopista, tramo
 		]
 
 		return this.isReady()
 			.then(() => {
-				return this.database.executeSql(`insert into secciones (cadenamiento_inicial_km, cadenamiento_inicial_m,
+				return this.database.executeSql(`insert into secciones (id, cadenamiento_inicial_km, cadenamiento_inicial_m,
 		            cadenamiento_final_km, cadenamiento_final_m, seccion_id_api, autopista_id, tramo_id)
-                    values(?,?,?,?,?,?,?)`, parametros)
+                    values(?,?,?,?,?,?,?,?)`, parametros)
 			})
 	}
 
@@ -279,8 +282,8 @@ export class DatabaseProvider {
 	registrarCuerpos = (cuerpos) => {
 		return this.isReady()
 			.then(() => {
-				let sql = `insert into cuerpos(descripcion, cuerpo_id_api) values (?,?);`
-				return this.database.executeSql(sql, [cuerpos.descripcion, cuerpos.id])
+				let sql = `insert into cuerpos(id, descripcion, cuerpo_id_api) values (?,?,?);`
+				return this.database.executeSql(sql, [cuerpos.id, cuerpos.descripcion, cuerpos.id])
 			})
 
 	}
@@ -289,8 +292,8 @@ export class DatabaseProvider {
 	registrarElementosGenerales = (data) => {
 		return this.isReady()
 			.then(() => {
-				let sql = `insert into elementos_generales_camino(descripcion, elemento_general_id_api) values (?,?);`
-				return this.database.executeSql(sql, [data.descripcion, data.id])
+				let sql = `insert into elementos_generales_camino(id, descripcion, elemento_general_id_api) values (?,?,?);`
+				return this.database.executeSql(sql, [data.id, data.descripcion, data.id])
 			})
 	}
 
@@ -298,8 +301,8 @@ export class DatabaseProvider {
 	registrarValoresPonderados = (data) => {
 		return this.isReady()
 			.then(() => {
-				let sql = `insert into valores_ponderados(valor_ponderado, valor_ponderado_id_api, elemento_general_id) values (?,?,?);`
-				return this.database.executeSql(sql, [data.valor_ponderado, data.id, data.elemento_general_camino_id])
+				let sql = `insert into valores_ponderados(id, valor_ponderado, valor_ponderado_id_api, elemento_general_id) values (?,?,?,?);`
+				return this.database.executeSql(sql, [data.id, data.valor_ponderado, data.id, data.elemento_general_camino_id])
 			})
 	}
 
@@ -307,8 +310,8 @@ export class DatabaseProvider {
 	registrarElementos = (elemento) => {
 		return this.isReady()
 			.then(() => {
-				let sql = `insert into elementos(descripcion, elemento_id_api, valor_ponderado_id) values (?,?,?);`
-				return this.database.executeSql(sql, [elemento.descripcion, elemento.id, elemento.valor_ponderado_id])
+				let sql = `insert into elementos(id, descripcion, elemento_id_api, valor_ponderado_id) values (?,?,?,?);`
+				return this.database.executeSql(sql, [elemento.id, elemento.descripcion, elemento.id, elemento.valor_ponderado_id])
 			})
 	}
 
@@ -316,8 +319,8 @@ export class DatabaseProvider {
 	registrarFactorElemento = (factor) => {
 		return this.isReady()
 			.then(() => {
-				let sql = `insert into factores_elementos(factor_elemento, factor_id_api, elemento_id) values (?,?,?);`
-				return this.database.executeSql(sql, [factor.factor_elemento, factor.id, factor.elemento_id])
+				let sql = `insert into factores_elementos(id, factor_elemento, factor_id_api, elemento_id) values (?,?,?,?);`
+				return this.database.executeSql(sql, [factor.id, factor.factor_elemento, factor.id, factor.elemento_id])
 			})
 	}
 
@@ -325,8 +328,8 @@ export class DatabaseProvider {
 	registrarIntensidad = (intensidad) => {
 		return this.isReady()
 			.then(() => {
-				let sql = `insert into intensidades(descripcion, intensidad_id_api, elemento_id) values (?,?,?);`
-				return this.database.executeSql(sql, [intensidad.descripcion, intensidad.id, intensidad.elemento_id])
+				let sql = `insert into intensidades(id, descripcion, intensidad_id_api, elemento_id, defecto_id) values (?,?,?,?,?);`
+				return this.database.executeSql(sql, [intensidad.id, intensidad.descripcion, intensidad.id, intensidad.elemento_id, intensidad.defecto_id])
 			})
 	}
 
@@ -334,8 +337,8 @@ export class DatabaseProvider {
 	registrarDefecto = (defecto) => {
 		return this.isReady()
 			.then(() => {
-				let sql = `insert into defectos(descripcion, defecto_id_api, elemento_id) values (?,?,?);`
-				return this.database.executeSql(sql, [defecto.descripcion, defecto.id, defecto.elemento_id])
+				let sql = `insert into defectos(id, descripcion, defecto_id_api, elemento_id) values (?,?,?,?);`
+				return this.database.executeSql(sql, [defecto.id, defecto.descripcion, defecto.id, defecto.elemento_id])
 			})
 	}
 
@@ -343,8 +346,8 @@ export class DatabaseProvider {
 	registrarRangos = (rango) => {
 		return this.isReady()
 			.then(() => {
-				let sql = `insert into rangos(rango_inicial, rango_final, defecto_id, intensidad_id, rango_id_api) values (?,?,?,?,?);`
-				return this.database.executeSql(sql, [rango.rango_inicial, rango.rango_final, rango.defecto_id, rango.intensidad_id, rango.id])
+				let sql = `insert into rangos(id, rango_inicial, rango_final, elemento_id, defecto_id, intensidad_id, rango_id_api) values (?,?,?,?,?,?,?);`
+				return this.database.executeSql(sql, [rango.id, rango.rango_inicial, rango.rango_final, rango.elemento_id, rango.defecto_id, rango.intensidad_id, rango.id])
 			})
 	}
 
@@ -381,9 +384,8 @@ export class DatabaseProvider {
 	obtenerElementos = () => {
 		return this.isReady()
 			.then(() => {
-				return this.database.executeSql(`select * from elementos order by 2 ASC`, []).then((elementos) => {
+				return this.database.executeSql(`select * from elementos order by 1 ASC`, []).then((elementos) => {
 					let listaElementos = []
-					let defectos = []
 					for (let i = 0; i < elementos.rows.length; i++) {
 						listaElementos.push({
 							id: elementos.rows.item(i).id,
@@ -409,7 +411,8 @@ export class DatabaseProvider {
 						for (let i = 0; i < defectos.rows.length; i++) {
 							listaDefectos.push({
 								id: defectos.rows.item(i).id,
-								descripcion: defectos.rows.item(i).descripcion
+								descripcion: defectos.rows.item(i).descripcion,
+								calificacion: 0.0
 							})
 						}
 						return listaDefectos
@@ -418,10 +421,10 @@ export class DatabaseProvider {
 	}
 
 	/* Obtener un listado de intensidades por elemento en el origen de datos. */
-	obtenerIntensidades = (elemento) => {
+	obtenerIntensidades = (elemento, defecto) => {
 		return this.isReady()
 			.then(() => {
-				return this.database.executeSql(`select * from intensidades WHERE elemento_id = ${elemento} order by 2 ASC`, [])
+				return this.database.executeSql(`select * from intensidades WHERE elemento_id = ${elemento} and defecto_id = ${defecto} order by 2 ASC`, [])
 					.then((data) => {
 						let intensidades = []
 						for (let i = 0; i < data.rows.length; i++) {
@@ -433,9 +436,11 @@ export class DatabaseProvider {
 	}
 
 	/* Obtener rangos por defecto y por intensidad en el origen de datos. */
-	obtenerRangos = (defecto, intensidad) => {
+	obtenerRangos = (elemento, defecto, intensidad) => {
+		console.log(elemento, defecto, intensidad)
+
 		return this.isReady().then(() => {
-			return this.database.executeSql(`select * from rangos where defecto_id = ? and intensidad_id = ?`, [defecto, intensidad]).then((rangos) => {
+			return this.database.executeSql(`select * from rangos where elemento_id = ? and defecto_id = ? and intensidad_id = ?`, [elemento, defecto, intensidad]).then((rangos) => {
 				let listaDeRangos = []
 				for (let i = 0; i < rangos.rows.length; i++) {
 					listaDeRangos.push(rangos.rows.item(i))

@@ -1,9 +1,4 @@
 import {
-	FormGroup,
-	FormControl,
-	Validators
-} from '@angular/forms'
-import {
 	Component
 } from '@angular/core';
 import {
@@ -31,44 +26,31 @@ import {
 export class ListadoIntensidadesPage {
 	elemento: number = 0
 	defecto: number = 0
+	defectoDescripcion: string = ''
 	intensidades = []
-	// disabled: boolean = true
-	form: FormGroup
-	intensidadSeleccionada = {}
 
-	datosCalificacion = {
-		rangoInicial: 0,
-		rangoFinal: 0
-	}
+	intensidadSeleccionada = {}
 
 	/* Al cargar el componente, cargamos el listado de intensidades. */
 	ionViewDidLoad(): void {
 		this.obtenerIntensidades()
-
-		// this.form = new FormGroup({
-		// 	valorCalificacion: new FormControl({
-		// 		disabled: true
-		// 	}, Validators.compose([
-		// 		Validators.required,
-		// 		Validators.min(this.datosCalificacion.rangoInicial),
-		// 		Validators.max(this.datosCalificacion.rangoFinal),
-		// 	])),
-
-		// })
 	}
 
 	constructor(public navCtrl: NavController, public navParams: NavParams, private autopistasProvider: AutopistasProvider,
 		public view: ViewController) {
 		this.elemento = this.navParams.get('elemento')
 		this.defecto = this.navParams.get('defecto')
+		this.defectoDescripcion = this.navParams.get('defectoDescripcion')
 	}
 
 	/* Obtener un listado de intensidades por elemento. */
 	obtenerIntensidades = () => {
-		this.autopistasProvider.obtenerIntensidades(this.elemento).then((intensidades) => {
+		this.autopistasProvider.obtenerIntensidades(this.elemento, this.defecto).then((intensidades) => {
 			for (let intensidad of intensidades) {
 				/* Obtener rangos por intensidad y defecto. */
-				this.autopistasProvider.obtenerRangos(this.defecto, intensidad.id).then((rangos) => {
+				this.autopistasProvider.obtenerRangos(intensidad.elemento_id, this.defecto, intensidad.id).then((rangos) => {
+					console.log(rangos)
+
 					this.intensidades.push({
 						id: intensidad.id,
 						descripcion: intensidad.descripcion,
@@ -89,7 +71,6 @@ export class ListadoIntensidadesPage {
 	/* Cerrar el cuadro modal. */
 	cancelar = () => {
 		this.view.dismiss()
-
 	}
 
 	/* Obtener intensidad a calificar. */

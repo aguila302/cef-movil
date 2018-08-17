@@ -10,6 +10,11 @@
     </ion-navbar>
 </ion-header>
 <ion-content padding>
+    <ion-item text-wrap color="light">
+        <ion-label>
+            Defecto -> {{ defectoDescripcion }}
+        </ion-label>
+    </ion-item>
     <ion-list radio-group>
         <ion-item text-wrap *ngFor="let intensidad of intensidades">
             <!-- <ion-label stacked *ngFor="let rango of intensidad.rangos">{{ rango.rango_inicial }} - {{ rango.rango_final }}</ion-label> -->

@@ -37,12 +37,12 @@ export class AutopistasProvider {
 	}
 
 	/* Obtener un listado de intensidades por elemento en el origen de datos. */
-	obtenerIntensidades = (elemento: number) => {
-		return this.databaseProvider.obtenerIntensidades(elemento)
+	obtenerIntensidades = (elemento: number, defecto: number) => {
+		return this.databaseProvider.obtenerIntensidades(elemento, defecto)
 	}
 
 	/* Obtener un listado de rangis por defecto y por intensidad en el origen de datos. */
-	obtenerRangos = (defecto, intensidad) => {
-		return this.databaseProvider.obtenerRangos(defecto, intensidad)
+	obtenerRangos = (elemento, defecto, intensidad) => {
+		return this.databaseProvider.obtenerRangos(elemento, defecto, intensidad)
 	}
 }

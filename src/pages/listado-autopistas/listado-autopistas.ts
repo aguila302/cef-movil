@@ -84,6 +84,8 @@ export class ListadoAutopistasPage {
 
 	/* Mostrar opciones a realizar en una autopista. */
 	mostrarOpciones = (autopista) => {
+		console.log(autopista);
+
 		let apciones = this.acciones.create({
 			title: 'Selecciona una opción',
 			buttons: [{

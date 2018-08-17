@@ -69,8 +69,10 @@ import {
 	imports: [
 		BrowserModule,
 		IonicModule.forRoot(MyApp),
-		IonicStorageModule.forRoot(),
-
+		IonicStorageModule.forRoot({
+			name: '__mydb',
+			driverOrder: ['indexeddb', 'sqlite', 'websql']
+		}),
 	],
 	bootstrap: [IonicApp],
 	entryComponents: [

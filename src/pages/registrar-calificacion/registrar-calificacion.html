@@ -53,20 +53,23 @@
                 <ion-item text-wrap>
                     {{ defecto.descripcion }}
                     <p ion-text text-right>
-                        0.00
+                        {{ defecto.calificacion }}
                     </p>
                 </ion-item>
+                <!-- <ion-item text-wrap color="light">
+                    {{ defecto.calificacionXElemento }}
+                </ion-item> -->
                 <ion-item-options side="right">
-                    <button ion-button [disabled]="submit" color="light" (click)="muestraIntensidades(elemento.id, defecto.id)">Intensidad</button>
-                    <button ion-button [disabled]="submit" color="light" (click)="calificarIntensidad()">Calificar</button>
+                    <button ion-button [disabled]="submit" color="light" (click)="muestraIntensidades(elemento.id, defecto.id, defecto.descripcion)">Calificar</button>
                 </ion-item-options>
             </ion-item-sliding>
         </ion-list>
-        <!-- <button ion-item text-wrap *ngFor="let defecto of elemento.defectos" [disabled]="submit" (click)="muestraIntensidades(elemento.id, defecto.id)">
-            {{ defecto.descripcion }}
-            <p ion-text text-right>
-                0.00
-            </p>
-        </button> -->
+        <ion-item text-right color="light">
+            <ion-label>
+                Calificación total {{ elemento.calificacionXElemento }}
+            </ion-label>
+        </ion-item>
+        <hr>
     </ion-item-group>
+    <button full large ion-button block ion-button [disabled]="submit" (click)="guardarCalificaciones()">Guardar</button>
 </ion-content>

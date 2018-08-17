@@ -142,12 +142,13 @@ export class CatalogosApiProvider {
 	}
 
 	/* Resolver al endpoint del api para obtener las intensidades de elementos. */
-	obtenerIntensidades = (data, elemento) => {
+	obtenerIntensidades = (data, elemento, defecto) => {
 		let header = {
 			'Authorization': `Bearer ${data.access_token}`,
 			'Content-Type': HEADER
 		}
-		return this.http.get(`${URL_BASE}/api/elementos/${elemento}/intensidades`, {}, header)
+		this.http.setRequestTimeout(15000)
+		return this.http.get(`${URL_BASE}/api/elementos/${elemento}/defectos/${defecto}/intensidades`, {}, header)
 			.then((data) => {
 				return {
 					status: data.status,
