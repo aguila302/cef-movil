@@ -1,3 +1,12 @@
+/**
+ * Servicio generado para la gestion de autenticación.
+ * Autor: Alfonso Hernández Montoya.
+ * Fecha de creación: 01/08/2018.
+ * Descripción: Servicio que administra las peticiones hacia el API de autenticación.
+ * Modifico: Alfonso Hernández Montoya.
+ * Fecha modificación: 01/08/2018.
+ */
+
 import {
 	Injectable
 } from '@angular/core';

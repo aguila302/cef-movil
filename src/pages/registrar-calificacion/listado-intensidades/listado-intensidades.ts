@@ -1,3 +1,12 @@
+/**
+ * Clase generada para el componente de ListadoIntensidadesPage.
+ * Autor: Alfonso Hernández Montoya.
+ * Fecha de creación: 01/08/2018.
+ * Descripción: Clase para la funcionalidad de mostrar una lista de intensidades.
+ * Modifico: Alfonso Hernández Montoya.
+ * Fecha modificación: 01/08/2018.
+ */
+
 import {
 	Component
 } from '@angular/core';
@@ -49,8 +58,6 @@ export class ListadoIntensidadesPage {
 			for (let intensidad of intensidades) {
 				/* Obtener rangos por intensidad y defecto. */
 				this.autopistasProvider.obtenerRangos(intensidad.elemento_id, this.defecto, intensidad.id).then((rangos) => {
-					console.log(rangos)
-
 					this.intensidades.push({
 						id: intensidad.id,
 						descripcion: intensidad.descripcion,

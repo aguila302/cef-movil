@@ -1,3 +1,12 @@
+/**
+ * Clase generada para el componente de CalificarIntensidadPage.
+ * Autor: Alfonso Hernández Montoya.
+ * Fecha de creación: 01/08/2018.
+ * Descripción: Clase para la funcionalidad de calificar una intensidad.
+ * Modifico: Alfonso Hernández Montoya.
+ * Fecha modificación: 01/08/2018.
+ */
+
 import {
 	FormGroup,
 	FormControl,

@@ -1,3 +1,12 @@
+/**
+ * Clase generada para el componente de ListadoAutopistasPage.
+ * Autor: Alfonso Hernández Montoya.
+ * Fecha de creación: 01/08/2018.
+ * Descripción: Clase para la funcionalidad de inicio de sesión.
+ * Modifico: Alfonso Hernández Montoya.
+ * Fecha modificación: 01/08/2018.
+ */
+
 import {
 	Component,
 	NgZone
@@ -84,8 +93,6 @@ export class ListadoAutopistasPage {
 
 	/* Mostrar opciones a realizar en una autopista. */
 	mostrarOpciones = (autopista) => {
-		console.log(autopista);
-
 		let apciones = this.acciones.create({
 			title: 'Selecciona una opción',
 			buttons: [{

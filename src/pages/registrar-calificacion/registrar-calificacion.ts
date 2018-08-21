@@ -1,3 +1,12 @@
+/**
+ * Clase generada para el componente de RegistrarCalificacionPage.
+ * Autor: Alfonso Hernández Montoya.
+ * Fecha de creación: 01/08/2018.
+ * Descripción: Clase para la funcionalidad de registrar calificaciones de un camino.
+ * Modifico: Alfonso Hernández Montoya.
+ * Fecha modificación: 01/08/2018.
+ */
+
 import {
 	NgForm
 } from '@angular/forms'
@@ -10,6 +19,8 @@ import {
 	NavController,
 	NavParams,
 	ModalController,
+	ToastController,
+	LoadingController
 } from 'ionic-angular'
 import {
 	AutopistasProvider
@@ -21,7 +32,6 @@ import {
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
  */
-
 @IonicPage()
 @Component({
 	selector: 'page-registrar-calificacion',
@@ -30,6 +40,7 @@ import {
 export class RegistrarCalificacionPage {
 
 	autopistaId: number = 0
+	nombreAutopista: string = ''
 	calificacionFinal: number = 0.0
 	elementos = []
 	cuerpos = []
@@ -41,10 +52,10 @@ export class RegistrarCalificacionPage {
 	submit: boolean = true
 
 	constructor(public navCtrl: NavController, public navParams: NavParams,
-		private autopistasProvider: AutopistasProvider, public modal: ModalController) {
-
+		private autopistasProvider: AutopistasProvider, public modal: ModalController, private toast: ToastController, public loading: LoadingController) {
 		/* Obtener información de la autopista actual. */
 		this.autopistaId = this.navParams.get('autopista').id
+		this.nombreAutopista = this.navParams.get('autopista').descripcion
 	}
 
 	ionViewDidLoad() {
@@ -106,6 +117,7 @@ export class RegistrarCalificacionPage {
 
 		/* Al cerrar el cuadro modal obtener valor de la calificación por defecto seleccionado. */
 		modalCalificcion.onDidDismiss(data => {
+
 			/* Si hay calificación para dicho defecto obtener su elemento correspondiente a esta calificación */
 			data ? (
 				this.elementos.filter(function(elemento) {
@@ -120,7 +132,6 @@ export class RegistrarCalificacionPage {
 					})
 				})
 			) : ''
-			console.log(this.elementos)
 		});
 
 		/* Mostrar el cuadro modal. */
@@ -130,5 +141,38 @@ export class RegistrarCalificacionPage {
 	/* Guardar las calificaciones de los elementos en el origen de datos. */
 	guardarCalificaciones = () => {
 		console.log(this.elementos)
+
+		let loading = this.loading.create({
+			content: 'Por favor espera...'
+		});
+
+		loading.present()
+
+		setTimeout(() => {
+			for (let elemento of this.elementos) {
+				for (let defecto of elemento.defectos) {
+					this.autopistasProvider.guardarCalificaciones(this.autopistaId, this.filtro.cuerpo, this.filtro.seccion, elemento.id, defecto.id)
+				}
+			}
+		}, 1000);
+
+		setTimeout(() => {
+			loading.dismiss()
+			this.mostrarConfirmacion()
+		}, 4000)
+
+	}
+
+	/**
+	 * Mostrar mensaje de confirmación.
+	 */
+	mostrarConfirmacion = () => {
+		let toast = this.toast.create({
+			message: 'Las calificaciones se guardaron exitosamente',
+			duration: 3000,
+			position: 'middle'
+		});
+
+		toast.present();
 	}
 }

@@ -1,3 +1,11 @@
+/**
+ * Clase generada para el componente de LoginPage.
+ * Autor: Alfonso Hernández Montoya.
+ * Fecha de creación: 01/08/2018.
+ * Descripción: Clase para la funcionalidad del listado de autopistas.
+ * Modifico: Alfonso Hernández Montoya.
+ * Fecha modificación: 01/08/2018.
+ */
 import {
 	Component
 } from '@angular/core';

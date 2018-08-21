@@ -1,3 +1,12 @@
+/**
+ * Servicio generado para la gestion de la infomación de la aplicación.
+ * Autor: Alfonso Hernández Montoya.
+ * Fecha de creación: 01/08/2018.
+ * Descripción: Servicio que administra las peticiones locales.
+ * Modifico: Alfonso Hernández Montoya.
+ * Fecha modificación: 01/08/2018.
+ */
+
 import {
 	Injectable
 } from '@angular/core';
@@ -44,5 +53,10 @@ export class AutopistasProvider {
 	/* Obtener un listado de rangis por defecto y por intensidad en el origen de datos. */
 	obtenerRangos = (elemento, defecto, intensidad) => {
 		return this.databaseProvider.obtenerRangos(elemento, defecto, intensidad)
+	}
+
+	/* Guardar calificaciones generales de los elementos. */
+	guardarCalificaciones = (autopistaId, cuerpo, seccion, elementoId, defectoId) => {
+		return this.databaseProvider.guardarCalificaciones(autopistaId, cuerpo, seccion, elementoId, defectoId)
 	}
 }

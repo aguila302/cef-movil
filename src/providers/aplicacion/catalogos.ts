@@ -1,3 +1,12 @@
+/**
+ * Servicio generado para la gestion de catalogos descargados del API.
+ * Autor: Alfonso Hernández Montoya.
+ * Fecha de creación: 01/08/2018.
+ * Descripción: Servicio que administra la informacion descargada el API.
+ * Modifico: Alfonso Hernández Montoya.
+ * Fecha modificación: 01/08/2018.
+ */
+
 import {
 	Injectable
 } from '@angular/core';

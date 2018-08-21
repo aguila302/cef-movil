@@ -1,3 +1,12 @@
+/**
+ * Servicio generado para la gestion del origen de datos.
+ * Autor: Alfonso Hernández Montoya.
+ * Fecha de creación: 01/08/2018.
+ * Descripción: Servicio que administra la base de datos.
+ * Modifico: Alfonso Hernández Montoya.
+ * Fecha modificación: 01/08/2018.
+ */
+
 import {
 	Injectable
 } from '@angular/core';
@@ -160,6 +169,22 @@ export class DatabaseProvider {
                 defecto_id INTEGER,
                 intensidad_id INTEGER,
                 rango_id_api INTEGER,
+                FOREIGN KEY(elemento_id) REFERENCES elementos(id),
+                FOREIGN KEY(defecto_id) REFERENCES defectos(id),
+                FOREIGN KEY(intensidad_id) REFERENCES intensidades(id));`)
+
+			tx.executeSql(`CREATE TABLE IF NOT EXISTS calificaciones (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                autopista_id INTEGER,
+                cuerpo_id INTEGER,
+                seccion_id INTEGER,
+                elemento_id INTEGER,
+                defecto_id INTEGER,
+                intensidad_id INTEGER,
+                calificacion FLOAT,
+                FOREIGN KEY(autopista_id) REFERENCES autopistas(id),
+                FOREIGN KEY(cuerpo_id) REFERENCES cuerpos(id),
+                FOREIGN KEY(seccion_id) REFERENCES secciones(id),
                 FOREIGN KEY(elemento_id) REFERENCES elementos(id),
                 FOREIGN KEY(defecto_id) REFERENCES defectos(id),
                 FOREIGN KEY(intensidad_id) REFERENCES intensidades(id));`)
@@ -437,8 +462,6 @@ export class DatabaseProvider {
 
 	/* Obtener rangos por defecto y por intensidad en el origen de datos. */
 	obtenerRangos = (elemento, defecto, intensidad) => {
-		console.log(elemento, defecto, intensidad)
-
 		return this.isReady().then(() => {
 			return this.database.executeSql(`select * from rangos where elemento_id = ? and defecto_id = ? and intensidad_id = ?`, [elemento, defecto, intensidad]).then((rangos) => {
 				let listaDeRangos = []
@@ -448,5 +471,16 @@ export class DatabaseProvider {
 				return listaDeRangos
 			})
 		})
+	}
+
+	/* Guardar calificaciones generales de los elementos. */
+	guardarCalificaciones = (autopistaId, cuerpo, seccion, elementoId, defectoId) => {
+		let parametros = [autopistaId, cuerpo.id, seccion.id, elementoId, defectoId, 1, 1]
+		return this.isReady()
+			.then(() => {
+				let sql = `insert into calificaciones(autopista_id, cuerpo_id, seccion_id, elemento_id, defecto_id, intensidad_id, calificacion) values (?,?,?,?,?,?,?);`
+				return this.database.executeSql(sql, parametros)
+			})
+
 	}
 }

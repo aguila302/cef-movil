@@ -10,6 +10,12 @@
     </ion-navbar>
 </ion-header>
 <ion-content padding>
+        <ion-item text-wrap color="light">
+        <ion-label>
+            Autopista -> {{ nombreAutopista }}
+        </ion-label>
+    </ion-item>
+
     <form #filtroForm="ngForm" novalidate>
         <ion-list no-lines>
             <ion-item>
