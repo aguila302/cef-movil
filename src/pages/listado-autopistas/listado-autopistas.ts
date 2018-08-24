@@ -109,9 +109,17 @@ export class ListadoAutopistasPage {
 					})
 				}
 			}, {
-				text: 'Archive',
+				text: 'Resumen de calificación',
+				role: 'destructive',
 				handler: () => {
-					console.log('Archive clicked');
+					/* Mostrar el componente de resumen de calificaciones. */
+					this.navCtrl.push('ResumenCalificacionesPage', {
+						autopista
+					}, {
+						animate: true,
+						animation: 'ios-transition',
+						direction: 'forward'
+					})
 				}
 			}, {
 				text: 'Cancel',

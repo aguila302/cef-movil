@@ -26,12 +26,6 @@ import {
 	AutopistasProvider
 } from '../../providers/aplicacion/autopistas'
 
-/**
- * Generated class for the RegistrarCalificacionPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
 @IonicPage()
 @Component({
 	selector: 'page-registrar-calificacion',
@@ -52,7 +46,8 @@ export class RegistrarCalificacionPage {
 	submit: boolean = true
 
 	constructor(public navCtrl: NavController, public navParams: NavParams,
-		private autopistasProvider: AutopistasProvider, public modal: ModalController, private toast: ToastController, public loading: LoadingController) {
+		private autopistasProvider: AutopistasProvider, public modal: ModalController,
+		private toast: ToastController, public loading: LoadingController) {
 		/* Obtener información de la autopista actual. */
 		this.autopistaId = this.navParams.get('autopista').id
 		this.nombreAutopista = this.navParams.get('autopista').descripcion
@@ -77,7 +72,7 @@ export class RegistrarCalificacionPage {
 					this.elementos.push({
 						id: elemento.id,
 						descripcion: elemento.descripcion,
-						calificacionXElemento: 0,
+						calificacionXElemento: 0.0,
 						defectos: defecto,
 					})
 				})
@@ -117,19 +112,32 @@ export class RegistrarCalificacionPage {
 
 		/* Al cerrar el cuadro modal obtener valor de la calificación por defecto seleccionado. */
 		modalCalificcion.onDidDismiss(data => {
+			let elementoCalificado = []
+			let sumaCalificacion: number = 0
 
 			/* Si hay calificación para dicho defecto obtener su elemento correspondiente a esta calificación */
 			data ? (
-				this.elementos.filter(function(elemento) {
+				elementoCalificado = this.elementos.filter(function(elemento) {
 					return elemento.id === data.intensidad.elemento_id
-				})[0].defectos.filter(function(defecto) {
-					return defecto.id === data.intensidad.rangos[0].defecto_id
-				})[0].calificacion = data.calificacion,
+				}),
 
-				this.elementos.map((elemento) => {
+				elementoCalificado.map((elemento) => {
 					elemento.defectos.map((defecto) => {
-						return elemento.calificacionXElemento += parseFloat(defecto.calificacion)
+
+						/* Obtener defecto a calificar. */
+						if (defecto.id == data.intensidad.rangos[0].defecto_id) {
+							if (defecto.calificacion != 0) {
+								defecto.calificacion = 0
+							}
+							defecto.intensidad = intensidad.id
+							/* Asignar calificación a un defecto. */
+							defecto.calificacion = parseFloat(data.calificacion)
+						}
+						/* Obtener calificacion total por elemento. */
+						sumaCalificacion += parseFloat(defecto.calificacion)
+						elemento.calificacionXElemento = sumaCalificacion
 					})
+
 				})
 			) : ''
 		});
@@ -140,8 +148,6 @@ export class RegistrarCalificacionPage {
 
 	/* Guardar las calificaciones de los elementos en el origen de datos. */
 	guardarCalificaciones = () => {
-		console.log(this.elementos)
-
 		let loading = this.loading.create({
 			content: 'Por favor espera...'
 		});
@@ -151,7 +157,8 @@ export class RegistrarCalificacionPage {
 		setTimeout(() => {
 			for (let elemento of this.elementos) {
 				for (let defecto of elemento.defectos) {
-					this.autopistasProvider.guardarCalificaciones(this.autopistaId, this.filtro.cuerpo, this.filtro.seccion, elemento.id, defecto.id)
+					this.autopistasProvider.guardarCalificaciones(this.autopistaId, this.filtro.cuerpo,
+						this.filtro.seccion, elemento.id, defecto.id, defecto.intensidadId, defecto.calificacion)
 				}
 			}
 		}, 1000);
@@ -159,11 +166,14 @@ export class RegistrarCalificacionPage {
 		setTimeout(() => {
 			loading.dismiss()
 			this.mostrarConfirmacion()
+			this.filtro = {
+				cuerpo: '',
+				seccion: '',
+			}
 		}, 4000)
-
 	}
 
-	/**
+	/*
 	 * Mostrar mensaje de confirmación.
 	 */
 	mostrarConfirmacion = () => {

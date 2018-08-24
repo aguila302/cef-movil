@@ -10,12 +10,11 @@
     </ion-navbar>
 </ion-header>
 <ion-content padding>
-        <ion-item text-wrap color="light">
+    <ion-item text-wrap color="light">
         <ion-label>
             Autopista -> {{ nombreAutopista }}
         </ion-label>
     </ion-item>
-
     <form #filtroForm="ngForm" novalidate>
         <ion-list no-lines>
             <ion-item>
@@ -72,7 +71,7 @@
         </ion-list>
         <ion-item text-right color="light">
             <ion-label>
-                Calificación total {{ elemento.calificacionXElemento }}
+                Calificación total {{ elemento.calificacionXElemento | number }}
             </ion-label>
         </ion-item>
         <hr>

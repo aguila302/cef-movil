@@ -56,7 +56,12 @@ export class AutopistasProvider {
 	}
 
 	/* Guardar calificaciones generales de los elementos. */
-	guardarCalificaciones = (autopistaId, cuerpo, seccion, elementoId, defectoId) => {
-		return this.databaseProvider.guardarCalificaciones(autopistaId, cuerpo, seccion, elementoId, defectoId)
+	guardarCalificaciones = (autopistaId, cuerpo, seccion, elementoId, defectoId, intensidadId, calificacion) => {
+		return this.databaseProvider.guardarCalificaciones(autopistaId, cuerpo, seccion, elementoId, defectoId, intensidadId, calificacion)
+	}
+
+	/* Obtener resumen de calificaciones de una autopista. */
+	obtenerCalificaciones = (autopista) => {
+		return this.databaseProvider.obtenerCalificaciones(autopista.id)
 	}
 }

@@ -58,7 +58,7 @@ export class DatabaseProvider {
 					// 	.then((sql) => {
 					// 		console.log(sql)
 					// 	})
-					// 	.catch(e => {
+					//     .catch(e => {
 					// 		console.error(e)
 					// 	})
 				})
@@ -437,7 +437,8 @@ export class DatabaseProvider {
 							listaDefectos.push({
 								id: defectos.rows.item(i).id,
 								descripcion: defectos.rows.item(i).descripcion,
-								calificacion: 0.0
+								calificacion: 0.0,
+								intensidad: 0
 							})
 						}
 						return listaDefectos
@@ -474,13 +475,58 @@ export class DatabaseProvider {
 	}
 
 	/* Guardar calificaciones generales de los elementos. */
-	guardarCalificaciones = (autopistaId, cuerpo, seccion, elementoId, defectoId) => {
-		let parametros = [autopistaId, cuerpo.id, seccion.id, elementoId, defectoId, 1, 1]
+	guardarCalificaciones = (autopistaId, cuerpo, seccion, elementoId, defectoId, intensidadId, calificacion) => {
+		let parametros = [autopistaId, cuerpo.id, seccion.id, elementoId, defectoId, intensidadId, calificacion]
 		return this.isReady()
 			.then(() => {
-				let sql = `insert into calificaciones(autopista_id, cuerpo_id, seccion_id, elemento_id, defecto_id, intensidad_id, calificacion) values (?,?,?,?,?,?,?);`
+				let sql = `insert into calificaciones(autopista_id, cuerpo_id, seccion_id, elemento_id,
+                defecto_id, intensidad_id, calificacion) values (?,?,?,?,?,?,?);`
 				return this.database.executeSql(sql, parametros)
 			})
+	}
 
+	/* Obtener resumen de calificaciones de una autopista. */
+	obtenerCalificaciones = (autopista) => {
+
+		return this.isReady()
+			.then(() => {
+				let sql = `select t2.descripcion as cuerpo,
+                    t3.cadenamiento_inicial_km || ' - ' || t3.cadenamiento_inicial_m || ' + ' || t3.cadenamiento_final_km || ' - ' || t3.cadenamiento_final_m as seccion,
+                    t4.cadenamiento_inicial_km || ' - ' || t4.cadenamiento_inicial_m || ' + ' || t4.cadenamiento_final_km || ' - ' || t4.cadenamiento_final_m as tramo,
+                    t4.id as tramo_id,
+                    t7.descripcion as concepto_general,
+                    t5.descripcion as elemento,
+                    t8.factor_elemento as factor_elemento,
+                    t6.valor_ponderado as valor_ponderado,
+                    t1.calificacion as calificacion
+                    from calificaciones t1
+                    inner join cuerpos t2 on t1.cuerpo_id = t2.id
+                    inner join secciones t3 on t1.seccion_id = t3.id
+                    inner join tramos t4 on t3.tramo_id = t4.id
+                    inner join elementos t5 on t1.elemento_id = t5.id
+                    inner join valores_ponderados t6 on t5.valor_ponderado_id = t6.id
+                    inner join elementos_generales_camino t7 on t6.elemento_general_id = t7.id
+                    inner join factores_elementos t8 on t5.id = t8.elemento_id
+                    where t1.autopista_id = ?
+                    group by t3.id, t5.descripcion`
+				return this.database.executeSql(sql, [autopista]).then((calificaciones) => {
+
+					let listaCalificaciones = []
+					for (let i = 0; i < calificaciones.rows.length; i++) {
+						listaCalificaciones.push({
+							cuerpo: calificaciones.rows.item(i).cuerpo,
+							seccion: calificaciones.rows.item(i).seccion,
+							tramo: calificaciones.rows.item(i).tramo,
+							tramo_id: calificaciones.rows.item(i).tramo_id,
+							concepto_general: calificaciones.rows.item(i).concepto_general,
+							elemento: calificaciones.rows.item(i).elemento,
+							factor_elemento: calificaciones.rows.item(i).factor_elemento,
+							valor_ponderado: calificaciones.rows.item(i).valor_ponderado,
+							calificacion: calificaciones.rows.item(i).calificacion,
+						})
+					}
+					return listaCalificaciones
+				})
+			})
 	}
 }
