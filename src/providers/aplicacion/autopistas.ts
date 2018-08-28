@@ -61,7 +61,17 @@ export class AutopistasProvider {
 	}
 
 	/* Obtener resumen de calificaciones de una autopista. */
-	obtenerCalificaciones = (autopista) => {
-		return this.databaseProvider.obtenerCalificaciones(autopista.id)
+	obtenerCalificaciones = () => {
+		return this.databaseProvider.obtenerCalificaciones()
+	}
+
+	/* Obtener un listado de conceptos por seccion. */
+	obtenerConceptosPorSeccion = (autopistaId, seccionId) => {
+		return this.databaseProvider.obtenerConceptosPorSeccion(autopistaId, seccionId)
+	}
+
+	/* Obtener conceptos particulares y factor particular por cada valor ponderado correspondiente. */
+	obtenerConceptosGeneralesPorValorPonderado = (autopistaId, seccionId, valorPonderado) => {
+		return this.databaseProvider.obtenerConceptosGeneralesPorValorPonderado(autopistaId, seccionId, valorPonderado)
 	}
 }

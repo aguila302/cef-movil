@@ -58,7 +58,7 @@ export class DatabaseProvider {
 					// 	.then((sql) => {
 					// 		console.log(sql)
 					// 	})
-					//     .catch(e => {
+					// 	.catch(e => {
 					// 		console.error(e)
 					// 	})
 				})
@@ -464,13 +464,14 @@ export class DatabaseProvider {
 	/* Obtener rangos por defecto y por intensidad en el origen de datos. */
 	obtenerRangos = (elemento, defecto, intensidad) => {
 		return this.isReady().then(() => {
-			return this.database.executeSql(`select * from rangos where elemento_id = ? and defecto_id = ? and intensidad_id = ?`, [elemento, defecto, intensidad]).then((rangos) => {
-				let listaDeRangos = []
-				for (let i = 0; i < rangos.rows.length; i++) {
-					listaDeRangos.push(rangos.rows.item(i))
-				}
-				return listaDeRangos
-			})
+			return this.database.executeSql(`select * from rangos where elemento_id = ? and defecto_id = ? and intensidad_id = ?`, [elemento, defecto, intensidad])
+				.then((rangos) => {
+					let listaDeRangos = []
+					for (let i = 0; i < rangos.rows.length; i++) {
+						listaDeRangos.push(rangos.rows.item(i))
+					}
+					return listaDeRangos
+				})
 		})
 	}
 
@@ -486,47 +487,122 @@ export class DatabaseProvider {
 	}
 
 	/* Obtener resumen de calificaciones de una autopista. */
-	obtenerCalificaciones = (autopista) => {
-
+	obtenerCalificaciones = () => {
 		return this.isReady()
 			.then(() => {
-				let sql = `select t2.descripcion as cuerpo,
-                    t3.cadenamiento_inicial_km || ' - ' || t3.cadenamiento_inicial_m || ' + ' || t3.cadenamiento_final_km || ' - ' || t3.cadenamiento_final_m as seccion,
-                    t4.cadenamiento_inicial_km || ' - ' || t4.cadenamiento_inicial_m || ' + ' || t4.cadenamiento_final_km || ' - ' || t4.cadenamiento_final_m as tramo,
-                    t4.id as tramo_id,
+				let sql = `select t1.id, t1.cadenamiento_inicial_km || ' - ' || t1.cadenamiento_inicial_m || ' + ' || t1.cadenamiento_final_km || ' - ' || t1.cadenamiento_final_m as seccion
+                    from secciones t1
+                    inner join calificaciones t2
+                    on t1.id = t2.seccion_id
+                    group by t2.seccion_id`
+
+				return this.database.executeSql(sql, [])
+					.then((response) => {
+
+						let listaDeSecciones = []
+						for (let i = 0; i < response.rows.length; i++) {
+							listaDeSecciones.push({
+								id: response.rows.item(i).id,
+								seccion: response.rows.item(i).seccion,
+							})
+						}
+						return listaDeSecciones
+					})
+			})
+		// return this.isReady()
+		// 	.then(() => {
+		// 		let sql = `select t2.descripcion as cuerpo,
+		//                   t3.cadenamiento_inicial_km || ' - ' || t3.cadenamiento_inicial_m || ' + ' || t3.cadenamiento_final_km || ' - ' || t3.cadenamiento_final_m as seccion,
+		//                   t4.cadenamiento_inicial_km || ' - ' || t4.cadenamiento_inicial_m || ' + ' || t4.cadenamiento_final_km || ' - ' || t4.cadenamiento_final_m as tramo,
+		//                   t4.id as tramo_id,
+		//                   t7.descripcion as concepto_general,
+		//                   t5.descripcion as elemento,
+		//                   t8.factor_elemento as factor_elemento,
+		//                   t6.valor_ponderado as valor_ponderado,
+		//                   t1.calificacion as calificacion
+		//                   from calificaciones t1
+		//                   inner join cuerpos t2 on t1.cuerpo_id = t2.id
+		//                   inner join secciones t3 on t1.seccion_id = t3.id
+		//                   inner join tramos t4 on t3.tramo_id = t4.id
+		//                   inner join elementos t5 on t1.elemento_id = t5.id
+		//                   inner join valores_ponderados t6 on t5.valor_ponderado_id = t6.id
+		//                   inner join elementos_generales_camino t7 on t6.elemento_general_id = t7.id
+		//                   inner join factores_elementos t8 on t5.id = t8.elemento_id
+		//                   where t1.autopista_id = ?
+		//                   group by t3.id, t5.descripcion`
+		//         return this.database.executeSql(sql, [autopista]).then((calificaciones) => {
+
+		//             let listaCalificaciones = []
+		//             for (let i = 0; i < calificaciones.rows.length; i++) {
+		//                 listaCalificaciones.push({
+		//                     cuerpo: calificaciones.rows.item(i).cuerpo,
+		//                     seccion: calificaciones.rows.item(i).seccion,
+		//                     tramo: calificaciones.rows.item(i).tramo,
+		//                     tramo_id: calificaciones.rows.item(i).tramo_id,
+		//                     concepto_general: calificaciones.rows.item(i).concepto_general,
+		//                     elemento: calificaciones.rows.item(i).elemento,
+		//                     factor_elemento: calificaciones.rows.item(i).factor_elemento,
+		//                     valor_ponderado: calificaciones.rows.item(i).valor_ponderado,
+		//                     calificacion: calificaciones.rows.item(i).calificacion,
+		//                 })
+		//             }
+		//             return listaCalificaciones
+		//         })
+		//     })
+	}
+
+	/* Obtener un listado de conceptos por seccion. */
+	obtenerConceptosPorSeccion = (autopista, seccionId) => {
+		return this.isReady().then(() => {
+			return this.database.executeSql(`select
                     t7.descripcion as concepto_general,
-                    t5.descripcion as elemento,
-                    t8.factor_elemento as factor_elemento,
                     t6.valor_ponderado as valor_ponderado,
-                    t1.calificacion as calificacion
+                    t6.id as valor_ponderado_id
                     from calificaciones t1
-                    inner join cuerpos t2 on t1.cuerpo_id = t2.id
-                    inner join secciones t3 on t1.seccion_id = t3.id
-                    inner join tramos t4 on t3.tramo_id = t4.id
                     inner join elementos t5 on t1.elemento_id = t5.id
                     inner join valores_ponderados t6 on t5.valor_ponderado_id = t6.id
                     inner join elementos_generales_camino t7 on t6.elemento_general_id = t7.id
-                    inner join factores_elementos t8 on t5.id = t8.elemento_id
-                    where t1.autopista_id = ?
-                    group by t3.id, t5.descripcion`
-				return this.database.executeSql(sql, [autopista]).then((calificaciones) => {
+                    where t1.autopista_id = ? and t1.seccion_id = ?
+                    group by t7.descripcion, t6.valor_ponderado`, [autopista.id, seccionId])
+				.then((conceptos) => {
+					let listaDeconceptos = []
+					for (let i = 0; i < conceptos.rows.length; i++) {
+						/* Por cada valor ponderado obtener conceptos y factores particularea por sección. */
+						this.obtenerConceptosGeneralesPorValorPonderado(autopista.id, seccionId, conceptos.rows.item(i).valor_ponderado_id)
+							.then((factores) => {
+								listaDeconceptos.push({
+									concepto_general: conceptos.rows.item(i).concepto_general,
+									valor_ponderado: conceptos.rows.item(i).valor_ponderado,
+									valor_ponderado_id: conceptos.rows.item(i).valor_ponderado_id,
+									factores: factores
+								})
+							})
 
-					let listaCalificaciones = []
-					for (let i = 0; i < calificaciones.rows.length; i++) {
-						listaCalificaciones.push({
-							cuerpo: calificaciones.rows.item(i).cuerpo,
-							seccion: calificaciones.rows.item(i).seccion,
-							tramo: calificaciones.rows.item(i).tramo,
-							tramo_id: calificaciones.rows.item(i).tramo_id,
-							concepto_general: calificaciones.rows.item(i).concepto_general,
-							elemento: calificaciones.rows.item(i).elemento,
-							factor_elemento: calificaciones.rows.item(i).factor_elemento,
-							valor_ponderado: calificaciones.rows.item(i).valor_ponderado,
-							calificacion: calificaciones.rows.item(i).calificacion,
-						})
 					}
-					return listaCalificaciones
+					return listaDeconceptos
 				})
-			})
+		})
+	}
+
+	/* Obtener conceptos particulares y factor particular por cada valor ponderado correspondiente. */
+	obtenerConceptosGeneralesPorValorPonderado = (autopista, seccionId, valorPonderado) => {
+		return this.isReady().then(() => {
+			return this.database.executeSql(`select t2.id, t2.descripcion as elemento, t4.factor_elemento as factor_elemento from calificaciones t1
+                    inner join elementos t2
+                    on t1.elemento_id = t2.id
+                    inner join valores_ponderados t3
+                    on t2.valor_ponderado_id = t3.id
+                    inner join factores_elementos t4
+                    on t2.id = t4.elemento_id
+                    where t1.autopista_id = ? and t1.seccion_id = ? and t2.valor_ponderado_id = ?
+                    group by t2.descripcion`, [autopista, seccionId, valorPonderado])
+				.then((factores) => {
+					let factorParticular = []
+					for (let i = 0; i < factores.rows.length; i++) {
+						factorParticular.push(factores.rows.item(i))
+					}
+					return factorParticular
+				})
+		})
 	}
 }

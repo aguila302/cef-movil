@@ -30,33 +30,30 @@ export class ResumenCalificacionesPage {
 
 	autopista = {}
 	calificaciones = []
+	width: number = 5
 
 	constructor(public navCtrl: NavController, public navParams: NavParams, private autopistasProvider: AutopistasProvider,
 		public zone: NgZone) {
 		this.autopista = this.navParams.get('autopista')
 	}
 
-	// ionViewDidLoad() {
-
-	// }
-
 	/* Obtener resumen de calificaciones de una autopista. */
 	ionViewDidLoad() {
-		this.autopistasProvider.obtenerCalificaciones(this.autopista).then(response => {
+		this.autopistasProvider.obtenerCalificaciones().then(response => {
 			this.zone.run(() => {
-				let miColeccion = collect(response)
-
-
-				let agrupados = miColeccion.groupBy('seccion')
-
-				// console.log(agrupados.all())
-
-				agrupados.each(function(seccion, index) {
-					console.log(seccion)
-
-
-				})
+				for (let index of response) {
+					/* Obtener conceptos por cada sección. */
+					this.autopistasProvider.obtenerConceptosPorSeccion(this.autopista, index.id).then((conceptos) => {
+						this.calificaciones.push({
+							id: index.id,
+							seccion: index.seccion,
+							conceptos: conceptos
+						})
+					})
+				}
 			})
+			console.log(this.calificaciones);
+
 		})
 	}
 
