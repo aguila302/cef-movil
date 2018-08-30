@@ -19,7 +19,6 @@ import {
 import {
 	AutopistasProvider
 } from '../../providers/aplicacion/autopistas'
-import * as collect from 'collect.js/dist'
 
 @IonicPage()
 @Component({
@@ -39,8 +38,11 @@ export class ResumenCalificacionesPage {
 
 	/* Obtener resumen de calificaciones de una autopista. */
 	ionViewDidLoad() {
-		this.autopistasProvider.obtenerCalificaciones().then(response => {
+		console.log(this.autopista);
+
+		this.autopistasProvider.obtenerCalificaciones(this.autopista).then(response => {
 			this.zone.run(() => {
+
 				for (let index of response) {
 					/* Obtener conceptos por cada sección. */
 					this.autopistasProvider.obtenerConceptosPorSeccion(this.autopista, index.id).then((conceptos) => {
@@ -51,9 +53,8 @@ export class ResumenCalificacionesPage {
 						})
 					})
 				}
+				console.log(this.calificaciones)
 			})
-			console.log(this.calificaciones);
-
 		})
 	}
 

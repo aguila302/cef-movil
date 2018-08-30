@@ -61,8 +61,8 @@ export class AutopistasProvider {
 	}
 
 	/* Obtener resumen de calificaciones de una autopista. */
-	obtenerCalificaciones = () => {
-		return this.databaseProvider.obtenerCalificaciones()
+	obtenerCalificaciones = (autopista) => {
+		return this.databaseProvider.obtenerCalificaciones(autopista)
 	}
 
 	/* Obtener un listado de conceptos por seccion. */

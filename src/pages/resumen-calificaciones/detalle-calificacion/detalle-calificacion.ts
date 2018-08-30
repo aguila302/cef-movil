@@ -6,13 +6,7 @@ import {
 	NavController,
 	NavParams
 } from 'ionic-angular';
-
-/**
- * Generated class for the DetalleCalificacionPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import * as collect from 'collect.js/dist'
 
 @IonicPage()
 @Component({
@@ -21,14 +15,33 @@ import {
 })
 export class DetalleCalificacionPage {
 	calificacion = {}
+	calificacionTramo: number = 0
+
 	constructor(public navCtrl: NavController, public navParams: NavParams) {
 		this.calificacion = navParams.get('calificacion')
-		console.log(this.calificacion);
+	}
+
+	ionViewDidLoad(): void {
+		this.procesarCalificaciones()
 
 	}
 
-	ionViewDidLoad() {
-		console.log('ionViewDidLoad DetalleCalificacionPage');
-	}
+	procesarCalificaciones = () => {
+		let coleccionCalificaciones = collect(this.calificacion['conceptos'])
 
+		coleccionCalificaciones.map(item => {
+			item.factores.map((factor) => {
+				factor.valorParticularMinuendo = factor.valor_particular[0].valor_particular
+				let excluido = factor.valor_particular.slice(1)
+				let suma = collect(excluido).sum('valor_particular')
+				factor.valorParticularSustraendo = suma
+				factor.valorParticularDiferencia = factor.valorParticularMinuendo - factor.valorParticularSustraendo
+				factor.calificacionParticular = factor.factor_elemento * factor.valorParticularDiferencia
+			})
+			let sumaCalificacionParticular = collect(item.factores).sum('calificacionParticular')
+
+			item.calificacionGeneral = sumaCalificacionParticular
+		});
+		this.calificacionTramo = coleccionCalificaciones.sum('calificacionGeneral')
+	}
 }

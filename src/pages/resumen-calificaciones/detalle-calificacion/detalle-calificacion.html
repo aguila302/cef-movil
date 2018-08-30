@@ -1,18 +1,70 @@
-<!--
-  Generated template for the DetalleCalificacionPage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
-
-  <ion-navbar color="primary">
-    <ion-title>Detalle de calificación</ion-title>
-  </ion-navbar>
-
+    <ion-navbar color="primary">
+        <ion-title>Detalle de calificación</ion-title>
+    </ion-navbar>
 </ion-header>
-
-
 <ion-content padding>
-
+    <ion-item-group no-padding *ngFor="let concepto of calificacion.conceptos">
+        <ion-item-divider text-wrap text-center color="light">
+            Concepto general {{ concepto.concepto_general }}
+        </ion-item-divider>
+        <ion-row>
+            <ion-col col-12 text-center [ngClass]="'cabezera'">
+                <small>Valor ponderado general</small>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col col-12 text-center>
+                <small>{{ concepto.valor_ponderado }}</small>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col col-3 text-center [ngClass]="'cabezera'">
+                <small>Concepto particular</small>
+            </ion-col>
+            <ion-col col-3 text-center [ngClass]="'cabezera'">
+                <small>Factor particular</small>
+            </ion-col>
+            <ion-col col-3 text-center [ngClass]="'cabezera'">
+                <small>Valor particular</small>
+            </ion-col>
+            <ion-col col-3 text-center [ngClass]="'cabezera'">
+                <small>Calificación particular</small>
+            </ion-col>
+        </ion-row>
+        <ion-row *ngFor="let factor of concepto.factores let i = index">
+            <ion-col col-3 text-center>
+                <small>{{ factor.elemento }}</small>
+            </ion-col>
+            <ion-col col-3 text-center>
+                <small>{{ factor.factor_elemento | number }}</small>
+            </ion-col>
+            <ion-col col-3 text-center>
+                <small>{{ factor.valorParticularDiferencia | number }}</small>
+            </ion-col>
+            <ion-col col-3 text-center>
+                <small>{{ factor.calificacionParticular | number }}</small>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col col-12 text-center [ngClass]="'cabezera'">
+                <small>Calificación general</small>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col col-12 text-center>
+                <small>{{ concepto.calificacionGeneral | number }}</small>
+            </ion-col>
+        </ion-row>
+    </ion-item-group>
+    <ion-row>
+        <ion-col col-12 text-center [ngClass]="'cabezera'">
+            <small>Calificación del tramo</small>
+        </ion-col>
+    </ion-row>
+    <ion-row>
+        <ion-col col-12 text-center>
+            <small>{{ calificacionTramo | number }}</small>
+        </ion-col>
+    </ion-row>
 </ion-content>

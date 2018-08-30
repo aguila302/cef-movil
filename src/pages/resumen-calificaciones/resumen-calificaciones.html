@@ -4,71 +4,11 @@
     </ion-navbar>
 </ion-header>
 <ion-content padding>
-    <ion-item text-wrap color="light">
-        <ion-label>
-            Autopista -> {{ autopista.descripcion }}
-        </ion-label>
+    <ion-item detail-push>
+        <button ion-item margin-top *ngFor="let calificacion of calificaciones" (click)="mostrarDetalleCalificacion(calificacion)">
+            <!-- <ion-icon name="star" item-start></ion-icon> -->
+            <ion-icon><i class="fa fa-road fa-3x" aria-hidden="true"></i></ion-icon>
+            Tramo {{ calificacion.seccion }}
+        </button>
     </ion-item>
-    <hr>
-    <ion-item-group no-padding *ngFor="let calificacion of calificaciones">
-        <ion-item-divider text-wrap color="light">
-            {{ calificacion.seccion }}
-        </ion-item-divider>
-        <ion-list *ngFor="let concepto of calificacion.conceptos; let i = index">
-            <!-- <ion-grid> -->
-            <ion-row>
-                <ion-col col-12 text-center [ngClass]="'cabezera'">
-                    Concepto general
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col col-12 text-center>
-                    <small>{{ i + 1}} ) {{ concepto.concepto_general }}</small>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col col-12 text-center [ngClass]="'cabezera'">
-                    Valor ponderado general
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col col-12 text-center>
-                    <small>{{ concepto.valor_ponderado }}</small>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col col-12 text-center [ngClass]="'cabezera'">
-                    Concepto particular
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col col-3 text-wrap text-center col-4 *ngFor="let factor of concepto.factores; let i = index">
-                    <small>{{ factor.elemento }}</small>
-                </ion-col>
-            </ion-row>
-            <!-- </ion-grid> -->
-        </ion-list>
-  <!--       <ion-list *ngFor="let factor of calificaciones.conceptos.factores; let i = index">
-            <ion-row>
-                <ion-col col-12 text-center [ngClass]="'cabezera'">
-                    Concepto particular
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col col-4 text-wrap col-4 text-center>
-                    <small>{{ factor.elemento }}</small>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col col-12 text-center [ngClass]="'cabezera'">
-                    Factor particular
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col text-wrap col-4 text-center *ngFor="let factor of calificacion.factores; let i = index">
-                    <small>{{ factor.factor_elemento }}</small>
-                </ion-col>
-            </ion-row>
-        </ion-list> -->
-    </ion-item-group>
 </ion-content>

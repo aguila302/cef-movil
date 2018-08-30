@@ -158,7 +158,7 @@ export class RegistrarCalificacionPage {
 			for (let elemento of this.elementos) {
 				for (let defecto of elemento.defectos) {
 					this.autopistasProvider.guardarCalificaciones(this.autopistaId, this.filtro.cuerpo,
-						this.filtro.seccion, elemento.id, defecto.id, defecto.intensidadId, defecto.calificacion)
+						this.filtro.seccion, elemento.id, defecto.id, defecto.intensidad, defecto.calificacion)
 				}
 			}
 		}, 1000);
