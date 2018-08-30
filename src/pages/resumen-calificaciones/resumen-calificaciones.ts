@@ -19,6 +19,9 @@ import {
 import {
 	AutopistasProvider
 } from '../../providers/aplicacion/autopistas'
+import {
+	faCoffee
+} from '@fortawesome/free-solid-svg-icons';
 
 @IonicPage()
 @Component({
@@ -26,6 +29,11 @@ import {
 	templateUrl: 'resumen-calificaciones.html',
 })
 export class ResumenCalificacionesPage {
+
+	title = 'app';
+	faCoffee = faCoffee;
+
+
 
 	autopista = {}
 	calificaciones = []
@@ -53,7 +61,6 @@ export class ResumenCalificacionesPage {
 						})
 					})
 				}
-				console.log(this.calificaciones)
 			})
 		})
 	}

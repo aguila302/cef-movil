@@ -500,7 +500,6 @@ export class DatabaseProvider {
 
 				return this.database.executeSql(sql, [autopista.id])
 					.then((response) => {
-
 						let listaDeSecciones = []
 						for (let i = 0; i < response.rows.length; i++) {
 							listaDeSecciones.push({

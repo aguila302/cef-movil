@@ -7,9 +7,10 @@
     </ion-navbar>
 </ion-header>
 <ion-content padding>
-    <ion-list margin-top>
+    <ion-list>
         <button ion-item *ngFor="let autopista of autopistas" (click)="mostrarOpciones(autopista)">
-            {{autopista.descripcion}}
+            <fa-icon [icon]="['fas', 'road']"></fa-icon>
+                {{autopista.descripcion}}
         </button>
     </ion-list>
 </ion-content>

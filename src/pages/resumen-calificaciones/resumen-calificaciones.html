@@ -4,11 +4,10 @@
     </ion-navbar>
 </ion-header>
 <ion-content padding>
-    <ion-item detail-push>
-        <button ion-item margin-top *ngFor="let calificacion of calificaciones" (click)="mostrarDetalleCalificacion(calificacion)">
-            <!-- <ion-icon name="star" item-start></ion-icon> -->
-            <ion-icon><i class="fa fa-road fa-3x" aria-hidden="true"></i></ion-icon>
+    <ion-list>
+        <button ion-item *ngFor="let calificacion of calificaciones" (click)="mostrarDetalleCalificacion(calificacion)">
+            <fa-icon [icon]="['fas', 'road']"></fa-icon>
             Tramo {{ calificacion.seccion }}
         </button>
-    </ion-item>
+    </ion-list>
 </ion-content>

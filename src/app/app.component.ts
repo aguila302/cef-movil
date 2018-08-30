@@ -21,7 +21,8 @@ import {
 } from '../pages/list/list'
 import {
 	Storage
-} from '@ionic/storage';
+} from '@ionic/storage'
+
 
 @Component({
 	templateUrl: 'app.html'

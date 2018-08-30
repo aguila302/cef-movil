@@ -58,7 +58,7 @@ import {
 } from '@ionic-native/sqlite-porter';
 import {
 	CatalogosApiProvider
-} from '../providers/catalogos-api/catalogos-api';
+} from '../providers/catalogos-api/catalogos-api'
 
 @NgModule({
 	declarations: [
