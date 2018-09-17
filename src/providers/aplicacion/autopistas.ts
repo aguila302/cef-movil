@@ -74,4 +74,9 @@ export class AutopistasProvider {
 	obtenerConceptosGeneralesPorValorPonderado = (autopistaId, seccionId, valorPonderado) => {
 		return this.databaseProvider.obtenerConceptosGeneralesPorValorPonderado(autopistaId, seccionId, valorPonderado)
 	}
+
+	/* Obtener calificaciones de una autopista por tramo y por sección */
+	consultarCalificacionesXTramo = (filtros) => {
+		return this.databaseProvider.consultarCalificacionesXTramo(filtros)
+	}
 }

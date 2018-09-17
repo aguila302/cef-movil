@@ -1,0 +1,45 @@
+<ion-header>
+    <ion-navbar color="primary">
+        <ion-title>Calificaciones por tramo</ion-title>
+    </ion-navbar>
+</ion-header>
+<ion-content padding>
+    <ion-item text-wrap color="light">
+        <ion-label>
+            Autopista -> {{ nombreAutopista }}
+        </ion-label>
+    </ion-item>
+    <form #filtroForm="ngForm" novalidate>
+        <ion-list no-lines>
+            <ion-item>
+                <ion-label stacked color="primary">Sección</ion-label>
+                <ion-select [(ngModel)]="filtro.seccion" name="seccion" #seccion="ngModel" required okText="Aceptar" cancelText="Cancelar">
+                    <ion-option *ngFor="let seccion of secciones" [value]="seccion">
+                        {{ seccion.cadenamiento_inicial_km }} - {{ seccion.cadenamiento_inicial_m }} + {{ seccion.cadenamiento_final_km }} - {{ seccion.cadenamiento_final_m }}
+                    </ion-option>
+                </ion-select>
+            </ion-item>
+            <p ion-text [hidden]="seccion.valid" color="danger" padding-left *ngIf="seccion.invalid && (seccion.dirty || seccion.touched)">
+                La sección es obligatorio.
+            </p>
+            <ion-item>
+                <ion-label stacked color="primary">Cuerpo</ion-label>
+                <ion-select [(ngModel)]="filtro.cuerpo" name="cuerpo" #cuerpo="ngModel" required okText="Aceptar" cancelText="Cancelar">
+                    <ion-option *ngFor="let cuerpo of cuerpos" [value]="cuerpo">
+                        {{ cuerpo.descripcion }}
+                    </ion-option>
+                </ion-select>
+            </ion-item>
+            <p ion-text [hidden]="cuerpo.valid" color="danger" padding-left *ngIf="cuerpo.invalid && (cuerpo.dirty || cuerpo.touched)">
+                El cuerpo es obligatorio.
+            </p>
+        </ion-list>
+        <ion-row responsive-sm>
+            <ion-col>
+                <button large ion-button (click)="consultarCalificacionesXTramo(filtroForm)" type="submit" block [disabled]="filtroForm.invalid">
+                    Consultar
+                </button>
+            </ion-col>
+        </ion-row>
+    </form>
+</ion-content>

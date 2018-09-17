@@ -43,10 +43,10 @@ export class DatabaseProvider {
 				this.database = db
 
 				// this.sqlite.deleteDatabase({
-				//     name: 'cef.db',
-				//     location: 'default'
+				// 	name: 'cef.db',
+				// 	location: 'default'
 				// }).then(() => {
-				//     console.log('databa se eleimanda')
+				// 	console.log('databa se eleimanda')
 				// })
 
 				/* Diseñar las tablas del origen de datos. */
@@ -82,20 +82,20 @@ export class DatabaseProvider {
 			tx.executeSql(`CREATE TABLE IF NOT EXISTS autopistas (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         descripcion TEXT,
-                        cadenamiento_inicial_km INTEGER,
-                        cadenamiento_inicial_m INTEGER,
-                        cadenamiento_final_km INTEGER,
-                        cadenamiento_final_m INTEGER,
+                        cadenamiento_inicial_km TEXT,
+                        cadenamiento_inicial_m TEXT,
+                        cadenamiento_final_km TEXT,
+                        cadenamiento_final_m TEXT,
                         autopista_id_api INTEGER,
                         user_id INTEGER,
                         FOREIGN KEY(user_id) REFERENCES usuarios(id));`)
 
 			tx.executeSql(`CREATE TABLE IF NOT EXISTS tramos (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        cadenamiento_inicial_km INTEGER,
-                        cadenamiento_inicial_m INTEGER,
-                        cadenamiento_final_km INTEGER,
-                        cadenamiento_final_m INTEGER,
+                        cadenamiento_inicial_km TEXT,
+                        cadenamiento_inicial_m TEXT,
+                        cadenamiento_final_km TEXT,
+                        cadenamiento_final_m TEXT,
                         tramo_id_api INTEGER,
                         autopista_id INTEGER,
                         FOREIGN KEY(autopista_id) REFERENCES autopistas(id));
@@ -103,10 +103,10 @@ export class DatabaseProvider {
 
 			tx.executeSql(`CREATE TABLE IF NOT EXISTS secciones (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        cadenamiento_inicial_km INTEGER,
-                        cadenamiento_inicial_m INTEGER,
-                        cadenamiento_final_km INTEGER,
-                        cadenamiento_final_m INTEGER,
+                        cadenamiento_inicial_km TEXT,
+                        cadenamiento_inicial_m TEXT,
+                        cadenamiento_final_km TEXT,
+                        cadenamiento_final_m TEXT,
                         seccion_id_api INTEGER,
                         autopista_id INTEGER,
                         tramo_id INTEGER,
@@ -133,6 +133,7 @@ export class DatabaseProvider {
 			tx.executeSql(`CREATE TABLE IF NOT EXISTS elementos (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 descripcion TEXT,
+                factor_elemento FLOAT,
                 elemento_id_api INTEGER,
                 valor_ponderado_id INTEGER,
                 FOREIGN KEY(valor_ponderado_id) REFERENCES valores_ponderados(id));`)
@@ -335,8 +336,8 @@ export class DatabaseProvider {
 	registrarElementos = (elemento) => {
 		return this.isReady()
 			.then(() => {
-				let sql = `insert into elementos(id, descripcion, elemento_id_api, valor_ponderado_id) values (?,?,?,?);`
-				return this.database.executeSql(sql, [elemento.id, elemento.descripcion, elemento.id, elemento.valor_ponderado_id])
+				let sql = `insert into elementos(id, descripcion, factor_elemento, elemento_id_api, valor_ponderado_id) values (?,?,?,?,?);`
+				return this.database.executeSql(sql, [elemento.id, elemento.descripcion, elemento.factor_elemento, elemento.id, elemento.valor_ponderado_id])
 			})
 	}
 
@@ -613,4 +614,31 @@ export class DatabaseProvider {
 				})
 		})
 	}
+
+	/* Obtener calificaciones de una autopista por tramo y por sección en el origen de datos. */
+	consultarCalificacionesXTramo = (filtros) => {
+		return this.isReady()
+			.then(() => {
+				return this.database.executeSql(`select
+                    t2.cadenamiento_inicial_km || ' - ' || t2.cadenamiento_inicial_m || ' + ' || t2.cadenamiento_final_km || ' - ' || t2.cadenamiento_final_m as seccion,
+                    (t2.cadenamiento_final_km || t2.cadenamiento_final_m - t2.cadenamiento_inicial_km || t2.cadenamiento_inicial_m) as longitud
+                    from calificaciones t1
+                    inner join secciones t2
+                    on t1.seccion_id = t2.id
+                    where t2.cadenamiento_final_km <= ? and t1.cuerpo_id = ?
+                    group by seccion`, [filtros.seccion.cadenamiento_final_km, filtros.cuerpo.id]).then((secciones) => {
+					let listaSecciones = []
+					for (let i = 0; i < secciones.rows.length; i++) {
+						listaSecciones.push({
+							seccion: secciones.rows.item(i).seccion,
+							longitud: secciones.rows.item(i).longitud,
+							calificacionPonderada: ''
+						});
+					}
+					return listaSecciones
+				})
+			})
+	}
+
+	/* Obetner */
 }

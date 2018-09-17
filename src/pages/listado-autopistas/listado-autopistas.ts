@@ -122,10 +122,17 @@ export class ListadoAutopistasPage {
 					})
 				}
 			}, {
-				text: 'Cancel',
-				role: 'cancel',
+				text: 'Calificación por tramo',
+				role: 'destructive',
 				handler: () => {
-					console.log('Cancel clicked');
+					/* Mostrar el componente de calificacion por tramo. */
+					this.navCtrl.push('CalificacionPorTramoPage', {
+						autopista
+					}, {
+						animate: true,
+						animation: 'ios-transition',
+						direction: 'forward'
+					})
 				}
 			}]
 		});
