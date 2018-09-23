@@ -32,7 +32,10 @@ export class CatalogosProvider {
 
 	/* Descargar los catalogos del endpoint del api. */
 	descargarCatalogos = (usuario) => {
+
+
 		return this.catalogosApi.obtenerCuerpos(usuario).then((cuerposApi) => {
+
 			for (let cuerpo of cuerposApi.data.data) {
 				this.registrarCuerpos(cuerpo)
 			}
@@ -162,7 +165,10 @@ export class CatalogosProvider {
 
 	/* Registrar autopistas en el origen de datos. */
 	registrarAutopistas = (usuario, autopista) => {
-		this.databaseProvider.registrarAutopistas(usuario, autopista)
+		this.databaseProvider.registrarAutopistas(usuario, autopista).then(res => {
+			console.log(res);
+
+		})
 	}
 
 	/* Registrar tramos en el origen de datos. */

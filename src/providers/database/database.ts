@@ -43,17 +43,23 @@ export class DatabaseProvider {
 				this.database = db
 
 				// this.sqlite.deleteDatabase({
-				// 	name: 'cef.db',
-				// 	location: 'default'
+				//     name: 'cef.db',
+				//     location: 'default'
 				// }).then(() => {
-				// 	console.log('databa se eleimanda')
+				//     console.log('databa se eleimanda')
 				// })
 
 				/* Diseñar las tablas del origen de datos. */
 				this.crearTablas().then((res) => {
 					this.dbReady.next(true)
 
-					/* Exportamos el origen de datos a sql. */
+					this.crearTablasReporteWeb().then((res) => {
+						this.dbReady.next(true)
+						console.log('tablas de reportes web creadas');
+
+					})
+
+					// /* Exportamos el origen de datos a sql. */
 					// this.sqlitePorter.exportDbToSql(this.database)
 					// 	.then((sql) => {
 					// 		console.log(sql)
@@ -640,5 +646,147 @@ export class DatabaseProvider {
 			})
 	}
 
-	/* Obetner */
+	/* Obtener calificaciones de una autopista en el origen de datos. */
+	obtenerCalificacionesXAutopista = (autopista) => {
+		console.log(autopista);
+
+		return this.isReady().then(() => {
+			return this.database.executeSql(`select t2.descripcion as cuerpo, t1.cuerpo_id as cuerpo_id,
+            t3.cadenamiento_inicial_km || ' - ' || t3.cadenamiento_inicial_m || ' + ' || t3.cadenamiento_final_km || ' - ' || t3.cadenamiento_final_m as seccion,
+            t1.seccion_id as seccion_id, t4.descripcion as elemento, t1.elemento_id as elemento_id, t5.descripcion as defecto, t1.defecto_id as defecto_id,
+            t6.descripcion as intensidad, t1.intensidad_id as intensidad_id, t1.calificacion as calificacion
+            from calificaciones t1
+            inner join cuerpos t2
+            on t1.cuerpo_id = t2.id
+            inner join secciones t3
+            on t1.seccion_id = t3.id
+            inner join elementos t4
+            on t1.elemento_id = t4.id
+            inner join defectos t5
+            on t1.defecto_id = t5.id
+            inner join intensidades t6
+            on t1.intensidad_id = t6.id
+            where t1.autopista_id = ?;`, [autopista.id])
+				.then((calificaciones) => {
+					let listaDecalificaciones = []
+					for (let i = 0; i < calificaciones.rows.length; i++) {
+
+
+						listaDecalificaciones.push(calificaciones.rows.item(i))
+					}
+					return listaDecalificaciones
+				})
+		})
+	}
+
+	/* Funciones para el reporte web. */
+	crearTablasReporteWeb = () => {
+		return this.database.transaction(function(tx) {
+			tx.executeSql(`CREATE TABLE IF NOT EXISTS reporte_secciones (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                autopista_id INTEGER,
+                seccion_id INTEGER,
+                seccion TEXT);`)
+
+			tx.executeSql(`CREATE TABLE IF NOT EXISTS reporte_conceptos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                reporte_secciones_id INTEGER,
+                concepto_general TEXT,
+                valor_ponderado FLOAT);`)
+
+			tx.executeSql(`CREATE TABLE IF NOT EXISTS reporte_factores (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        reporte_conceptos_id INTEGER,
+                        elemento_id INTEGER,
+                        elemento TEXT,
+                        factor_elemento FLOAT,
+                        valor_particular FLOAT
+                        );`)
+		})
+	}
+
+	obtenerSeccionReporte = (seccion) => {
+		return this.isReady()
+			.then(() => {
+				return this.database.executeSql(`select * from secciones WHERE id = ${seccion.id}`, [])
+					.then((data) => {
+						let secciones = []
+						for (let i = 0; i < data.rows.length; i++) {
+							secciones.push(data.rows.item(i))
+						}
+						return secciones
+					})
+			})
+	}
+
+	/* Registrar secciones para el reporte web. */
+	registrarseccionesReporte = (autopista, seccion_id, seccion) => {
+
+		let paramettros = [autopista, seccion_id, seccion]
+		return this.isReady()
+			.then(() => {
+				return this.database.executeSql(`insert into reporte_secciones (autopista_id, seccion_id, seccion)
+                    values(?,?,?)`, paramettros)
+			})
+	}
+
+	registrarConceptosReporte = (seccionId, conceptoGeneral, valorPonderado) => {
+		let paramettros = [seccionId, conceptoGeneral, valorPonderado]
+		return this.isReady()
+			.then(() => {
+				return this.database.executeSql(`insert into reporte_conceptos (reporte_secciones_id, concepto_general, valor_ponderado)
+                    values(?,?,?)`, paramettros)
+			})
+	}
+
+	registrarFactoresReporte = (conceptoId, elementoId, elemento, factor_Elemento, valor_particular) => {
+		let paramettros = [conceptoId, elementoId, elemento, factor_Elemento]
+		return this.isReady()
+			.then(() => {
+				return this.database.executeSql(`insert into reporte_factores (reporte_conceptos_id, elemento_id, elemento, factor_elemento)
+                    values(?,?,?,?)`, paramettros)
+			})
+	}
+
+	obtenerSeccionesReporte = (autopista) => {
+		return this.isReady()
+			.then(() => {
+				return this.database.executeSql(`select * from reporte_secciones WHERE autopista_id = ${autopista.id}`, [])
+					.then((data) => {
+						let secciones = []
+						for (let i = 0; i < data.rows.length; i++) {
+							secciones.push(data.rows.item(i))
+						}
+						return secciones
+					})
+			})
+	}
+
+	obtenerConceptosReporte = (seccionId) => {
+		return this.isReady()
+			.then(() => {
+				return this.database.executeSql(`select * from reporte_conceptos WHERE reporte_secciones_id = ${seccionId} order by id DESC`, [])
+					.then((data) => {
+						let conceptos = []
+						for (let i = 0; i < data.rows.length; i++) {
+							conceptos.push(data.rows.item(i))
+						}
+						return conceptos
+					})
+			})
+	}
+
+	obtenerFactoresReporte = (conceptoId) => {
+		return this.isReady()
+			.then(() => {
+				return this.database.executeSql(`select * from reporte_factores WHERE reporte_conceptos_id = ${conceptoId}`, [])
+					.then((data) => {
+						let factores = []
+						for (let i = 0; i < data.rows.length; i++) {
+							factores.push(data.rows.item(i))
+						}
+						return factores
+					})
+			})
+	}
 }

@@ -1,0 +1,55 @@
+<ion-header>
+    <ion-navbar color="primary">
+        <ion-title>Calificaciones a sincronizar</ion-title>
+        <ion-buttons end>
+            <button ion-button icon-only (click)="popover($event)">
+                <ion-icon name="more"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-navbar>
+</ion-header>
+<ion-content padding>
+    <ion-item text-wrap color="light">
+        <ion-label>
+            Autopista -> {{ autopista.descripcion }}
+        </ion-label>
+    </ion-item>
+    <ion-list [virtualScroll]="calificaciones" [bufferRatio]="3.1" [approxItemHeight]="'300px'">
+        <ion-item *virtualItem="let calificacion">
+            <ion-grid>
+                <ion-row>
+                    <ion-col>
+                        <span item-left><strong>Sección: </strong> {{ calificacion.seccion }}</span>
+                    </ion-col>
+                    <ion-col>
+                        <span item-left><strong>Cuerpo: </strong> {{ calificacion.cuerpo }}</span>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col text-left text-wrap>
+                        <span item-left><strong>Elemento: </strong> {{ calificacion.elemento }}</span>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col text-left text-wrap>
+                        <span item-left><strong>Defecto: </strong> {{ calificacion.defecto }}</span>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col text-left text-wrap>
+                        <span item-left><strong>Intensidad: </strong> {{ calificacion.intensidad }}</span>
+                    </ion-col>
+                    <ion-col text-left text-wrap>
+                        <span item-left><strong>Calificación: </strong> {{ calificacion.calificacion }}</span>
+                    </ion-col>
+                </ion-row>
+                <ion-row text-left>
+                    <ion-col col-12 text-wrap>
+                        <small ion-text color="danger" *ngIf="calificacion.estatusApi && calificacion.data && calificacion.data.error">{{ calificacion.data.error.message }}</small>
+                        <small ion-text color="secondary" *ngIf=" calificacion.estatusApi && calificacion.data && !calificacion.data.error">Calificación sincronizada {{ calificacion.data.created_at }}</small>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-item>
+    </ion-list>
+</ion-content>

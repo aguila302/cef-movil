@@ -23,12 +23,10 @@ export class DetalleCalificacionPage {
 
 	ionViewDidLoad(): void {
 		this.procesarCalificaciones()
-
 	}
 
 	procesarCalificaciones = () => {
 		let coleccionCalificaciones = collect(this.calificacion['conceptos'])
-
 		coleccionCalificaciones.map(item => {
 			item.factores.map((factor) => {
 				factor.valorParticularMinuendo = factor.valor_particular[0].valor_particular

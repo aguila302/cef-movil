@@ -46,8 +46,6 @@ export class ResumenCalificacionesPage {
 
 	/* Obtener resumen de calificaciones de una autopista. */
 	ionViewDidLoad() {
-		console.log(this.autopista);
-
 		this.autopistasProvider.obtenerCalificaciones(this.autopista).then(response => {
 			this.zone.run(() => {
 

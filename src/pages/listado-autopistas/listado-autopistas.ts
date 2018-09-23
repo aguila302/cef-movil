@@ -55,6 +55,12 @@ export class ListadoAutopistasPage {
 
 	/* Resolver al endpoint del api para obtener el listado de autopistas. */
 	obtenerAutopistasApi = () => {
+		console.log('obtener catalogos del api');
+		let usuario = {
+			usuario_id: this.usuario,
+			access_token: this.access_token
+		}
+
 		/* Crear un loager en saber cuando termina unespera para la descarga de los catalogos al endpoint del api. */
 		let loader = this.loading.create({
 			spinner: 'circles',
@@ -64,25 +70,28 @@ export class ListadoAutopistasPage {
 		loader.present();
 
 		/* Obtener datos del usuario conectado. */
-		this.storage.get('auth').then((usuario) => {
-			/* Obtener los catalogos al endpoint del api. */
-			this.catalogosProvider.descargarCatalogos(usuario).then((response) => {
-				this.zone.run(() => {
-					this.autopistas = response
-				})
-
-				setTimeout(() => {
-					loader.dismiss()
-				}, 4000)
+		// this.storage.get('auth').then((usuario) => {
+		/* Obtener los catalogos al endpoint del api. */
+		this.catalogosProvider.descargarCatalogos(usuario).then((response) => {
+			console.log('mi respuesta de la descarga');
+			this.zone.run(() => {
+				this.autopistas = response
 			})
-		}).catch((error) => {
-			console.error.bind(error)
+
+			setTimeout(() => {
+				loader.dismiss()
+			}, 4000)
 		})
+		// }).catch((error) => {
+		// 	console.error.bind(error)
+		// })
 	}
 
 	/* Obtener un listado de autopistas de un usuario en el origen de datros. */
 	obtenerAutopistasOrigenDeDatos = () => {
+		console.log('obtener catalogos del origen de datos');
 		this.storage.get('auth').then((response) => {
+
 			this.autopistasProvider.obtenerAutopistasOrigenDeDatos(response).then((response) => {
 				this.zone.run(() => {
 					this.autopistas = response
@@ -96,45 +105,61 @@ export class ListadoAutopistasPage {
 		let apciones = this.acciones.create({
 			title: 'Selecciona una opción',
 			buttons: [{
-				text: 'Registrar calificación de un camino',
-				role: 'destructive',
-				handler: () => {
-					/* Mostrar el componente de registrar calificación. */
-					this.navCtrl.push('RegistrarCalificacionPage', {
-						autopista
-					}, {
-						animate: true,
-						animation: 'ios-transition',
-						direction: 'forward'
-					})
+					text: 'Registrar calificación de un camino',
+					role: 'destructive',
+					handler: () => {
+						/* Mostrar el componente de registrar calificación. */
+						this.navCtrl.push('RegistrarCalificacionPage', {
+							autopista
+						}, {
+							animate: true,
+							animation: 'ios-transition',
+							direction: 'forward'
+						})
+					}
+				}, {
+					text: 'Resumen de calificación',
+					role: 'destructive',
+					handler: () => {
+						/* Mostrar el componente de resumen de calificaciones. */
+						this.navCtrl.push('ResumenCalificacionesPage', {
+							autopista
+						}, {
+							animate: true,
+							animation: 'ios-transition',
+							direction: 'forward'
+						})
+					}
+				}, {
+					text: 'Sincronizar información',
+					role: 'destructive',
+					handler: () => {
+						/* Mostrar el componente de calificacion por tramo. */
+						this.navCtrl.push('DesplieguePage', {
+							autopista,
+							access_token: this.access_token
+						}, {
+							animate: true,
+							animation: 'ios-transition',
+							direction: 'forward'
+						})
+					}
 				}
-			}, {
-				text: 'Resumen de calificación',
-				role: 'destructive',
-				handler: () => {
-					/* Mostrar el componente de resumen de calificaciones. */
-					this.navCtrl.push('ResumenCalificacionesPage', {
-						autopista
-					}, {
-						animate: true,
-						animation: 'ios-transition',
-						direction: 'forward'
-					})
-				}
-			}, {
-				text: 'Calificación por tramo',
-				role: 'destructive',
-				handler: () => {
-					/* Mostrar el componente de calificacion por tramo. */
-					this.navCtrl.push('CalificacionPorTramoPage', {
-						autopista
-					}, {
-						animate: true,
-						animation: 'ios-transition',
-						direction: 'forward'
-					})
-				}
-			}]
+				// {
+				// 	text: 'Calificación por tramo',
+				// 	role: 'destructive',
+				// 	handler: () => {
+				// 		/* Mostrar el componente de calificacion por tramo. */
+				// 		this.navCtrl.push('CalificacionPorTramoPage', {
+				// 			autopista
+				// 		}, {
+				// 			animate: true,
+				// 			animation: 'ios-transition',
+				// 			direction: 'forward'
+				// 		})
+				// 	}
+				// }
+			]
 		});
 		apciones.present();
 	}

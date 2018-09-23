@@ -79,4 +79,36 @@ export class AutopistasProvider {
 	consultarCalificacionesXTramo = (filtros) => {
 		return this.databaseProvider.consultarCalificacionesXTramo(filtros)
 	}
+
+	/* Obtener listado de calificaciones por autopista. */
+	obtenerCalificacionesXAutopista = (autopista) => {
+		return this.databaseProvider.obtenerCalificacionesXAutopista(autopista)
+	}
+
+	obtenerSeccionReporte = (seccion) => {
+		return this.databaseProvider.obtenerSeccionReporte(seccion)
+	}
+	registrarseccionesReporte = (autopista, seccion_id, seccion) => {
+		return this.databaseProvider.registrarseccionesReporte(autopista, seccion_id, seccion)
+	}
+
+	registrarConceptosReporte = (seccionId, conceptoGeneral, valorPonderado) => {
+		return this.databaseProvider.registrarConceptosReporte(seccionId, conceptoGeneral, valorPonderado)
+	}
+
+	registrarFactoresReporte = (conceptoId, elementoId, elemento, factor_Elemento, valor_particular) => {
+		return this.databaseProvider.registrarFactoresReporte(conceptoId, elementoId, elemento, factor_Elemento, valor_particular)
+	}
+
+	obtenerSeccionesReporte = (autopista) => {
+		return this.databaseProvider.obtenerSeccionesReporte(autopista)
+	}
+
+	obtenerConceptosReporte = (seccionId) => {
+		return this.databaseProvider.obtenerConceptosReporte(seccionId)
+	}
+
+	obtenerFactoresReporte = (conceptoId) => {
+		return this.databaseProvider.obtenerFactoresReporte(conceptoId)
+	}
 }

@@ -22,6 +22,7 @@ import {
 export class CatalogosApiProvider {
 
 	constructor(public http: HTTP) {}
+	responseResult = {}
 
 	/* Resolver al endpoint del api para obtener listado de cuerpos. */
 	obtenerCuerpos = (data) => {
@@ -37,6 +38,8 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
+				console.log(error);
+
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -59,6 +62,7 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
+				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -80,6 +84,7 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
+				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -101,6 +106,7 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
+				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -122,6 +128,7 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
+				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -143,6 +150,7 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
+				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -165,6 +173,7 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
+				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -186,6 +195,7 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
+				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -208,6 +218,7 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
+				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -229,6 +240,7 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
+				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -250,9 +262,154 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
+				console.log(JSON.parse(error.error));
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
+				}
+			})
+	}
+
+	/* Obtenemos los datos de las calificaciones a ser sincronizados. */
+	async sincronizarCalificaciones(autopista, calificaciones, accessToken) {
+		let data = {
+			autopista_id: autopista.id,
+			cuerpo_id: calificaciones.cuerpo_id,
+			seccion_id: calificaciones.seccion_id,
+			elemento_id: calificaciones.elemento_id,
+			defecto_id: calificaciones.defecto_id,
+			intensidad_id: calificaciones.intensidad_id,
+			calificacion: calificaciones.calificacion,
+		}
+
+		await this.resolveApi(data, accessToken).then((response) => {
+			// console.log(response)
+
+			this.responseResult = response
+			// console.log(response);
+
+		}).catch(error => {
+			console.error.bind(console)
+		})
+		return this.responseResult
+	}
+
+	/**
+	 * Realiza un resolve al end point y sincroniza la informacion de los levantamientos.
+	 */
+	async resolveApi(data, accessToken) {
+		/* Obtener token de acceso de un usuario. */
+
+		let headers = {
+			'Authorization': `Bearer ${accessToken}`,
+			'Accept': 'application/json',
+			'Content-Type': 'multipart/form-data'
+		}
+
+		return this.http.post(`${URL_BASE}/api/calificaciones`, data, headers)
+			.then(data => {
+				return {
+					'status': data.status,
+					'data': JSON.parse(data.data),
+					'headers': data.headers
+				}
+			}).catch(error => {
+				return {
+					'status': error.status,
+					'data': JSON.parse(error.error),
+					'headers': error.headers,
+				}
+			})
+
+	}
+
+	/* Sincronizar las secciones para el reporte al end point del api.
+	 */
+	async sincronizarSeccionesReporte(accessToken, autopistaId, seccionId, seccion) {
+		let data = {
+			autopista_id: autopistaId,
+			seccion_id: seccionId,
+			seccion: seccion
+		}
+		let headers = {
+			'Authorization': `Bearer ${accessToken}`,
+			'Accept': 'application/json',
+			'Content-Type': 'multipart/form-data'
+		}
+
+		return this.http.post(`${URL_BASE}/api/reporte-secciones`, data, headers)
+			.then(data => {
+				return {
+					'status': data.status,
+					'data': JSON.parse(data.data),
+					'headers': data.headers
+				}
+			}).catch(error => {
+				console.log(error);
+
+				return {
+					'status': error.status,
+					'data': JSON.parse(error.error),
+					'headers': error.headers,
+				}
+			})
+
+	}
+
+	async sincronizarConceptosReporte(accessToken, reporteSeccionesId, conceptoGeneral, valorPonderado) {
+		let data = {
+			reporte_secciones_id: reporteSeccionesId,
+			concepto_general: conceptoGeneral,
+			valor_ponderado: valorPonderado
+		}
+		let headers = {
+			'Authorization': `Bearer ${accessToken}`,
+			'Accept': 'application/json',
+			'Content-Type': 'multipart/form-data'
+		}
+
+		return this.http.post(`${URL_BASE}/api/reporte-conceptos`, data, headers)
+			.then(data => {
+				return {
+					'status': data.status,
+					'data': JSON.parse(data.data),
+					'headers': data.headers
+				}
+			}).catch(error => {
+				return {
+					'status': error.status,
+					'data': JSON.parse(error.error),
+					'headers': error.headers,
+				}
+			})
+	}
+
+	async sincronizarFactoresReporte(accessToken, reporteConceptosId, elementoId, elemento, factorElemento, valorParticular) {
+		let data = {
+			reporte_conceptos_id: reporteConceptosId,
+			elemento_id: elementoId,
+			elemento: elemento,
+			factor_elemento: factorElemento,
+			valor_particular: valorParticular
+		}
+		let headers = {
+			'Authorization': `Bearer ${accessToken}`,
+			'Accept': 'application/json',
+			'Content-Type': 'multipart/form-data'
+		}
+
+		return this.http.post(`${URL_BASE}/api/reporte-factores`, data, headers)
+			.then(data => {
+				return {
+					'status': data.status,
+					'data': JSON.parse(data.data),
+					'headers': data.headers
+				}
+			}).catch(error => {
+				return {
+					'status': error.status,
+					'data': JSON.parse(error.error),
+					'headers': error.headers,
 				}
 			})
 	}
