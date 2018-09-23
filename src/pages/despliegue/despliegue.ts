@@ -88,9 +88,8 @@ export class DesplieguePage {
 										this.catalogosApi.sincronizarConceptosReporte(usuario.access_token, concepto.reporte_secciones_id, concepto.concepto_general, concepto.valor_ponderado)
 											.then((response) => {
 												// console.log(response);
-
 												/* Obtener factores de las secciones. */
-										this.autopistasProvider.obtenerFactoresReporte(concepto.id)
+												this.autopistasProvider.obtenerFactoresReporte(concepto.id)
 													.then((factores) => {
 														console.log(factores);
 
