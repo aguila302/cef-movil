@@ -88,16 +88,16 @@ export class AutopistasProvider {
 	obtenerSeccionReporte = (seccion) => {
 		return this.databaseProvider.obtenerSeccionReporte(seccion)
 	}
-	registrarseccionesReporte = (autopista, seccion_id, seccion) => {
-		return this.databaseProvider.registrarseccionesReporte(autopista, seccion_id, seccion)
+	registrarseccionesReporte = (autopista, seccion_id, seccion, calificacionTramo, uuid) => {
+		return this.databaseProvider.registrarseccionesReporte(autopista, seccion_id, seccion, calificacionTramo, uuid)
 	}
 
-	registrarConceptosReporte = (seccionId, conceptoGeneral, valorPonderado) => {
-		return this.databaseProvider.registrarConceptosReporte(seccionId, conceptoGeneral, valorPonderado)
+	registrarConceptosReporte = (seccionId, conceptoGeneral, valorPonderado, calificacionGeneral) => {
+		return this.databaseProvider.registrarConceptosReporte(seccionId, conceptoGeneral, valorPonderado, calificacionGeneral)
 	}
 
-	registrarFactoresReporte = (conceptoId, elementoId, elemento, factor_Elemento, valor_particular) => {
-		return this.databaseProvider.registrarFactoresReporte(conceptoId, elementoId, elemento, factor_Elemento, valor_particular)
+	registrarFactoresReporte = (conceptoId, elementoId, elemento, factor_elemento, valor_particular, calificacionParticular) => {
+		return this.databaseProvider.registrarFactoresReporte(conceptoId, elementoId, elemento, factor_elemento, valor_particular, calificacionParticular)
 	}
 
 	obtenerSeccionesReporte = (autopista) => {

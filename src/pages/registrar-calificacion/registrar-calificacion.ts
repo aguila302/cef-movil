@@ -26,6 +26,7 @@ import {
 	AutopistasProvider
 } from '../../providers/aplicacion/autopistas'
 import * as collect from 'collect.js/dist'
+import * as uuid from 'uuid/v5'
 
 @IonicPage()
 @Component({
@@ -235,15 +236,19 @@ export class RegistrarCalificacionPage {
 					// Iterar el array para registrar la informacion en el origen de datos.
 					//
 					this.reporteCalificacionesWeb.forEach(item => {
-						console.log(item);
+						// console.log(item);
 
-						this.autopistasProvider.registrarseccionesReporte(item.autopista_id, item.id, item.seccion).then((secciones) => {
+						/* Generamos un uuid para guardar la seccion. */
+						let fechaHoraRegistro = (new Date()).toLocaleDateString('eu-ES') + ' ' + (new Date()).toLocaleTimeString('eu-ES')
+
+						this.autopistasProvider.registrarseccionesReporte(item.autopista_id, item.id, item.seccion, this.calificacionTramo, uuid(fechaHoraRegistro, uuid.URL)).then((secciones) => {
 							item.conceptos.map((concepto) => {
-								this.autopistasProvider.registrarConceptosReporte(secciones.insertId, concepto.concepto_general, concepto.valor_ponderado)
+								this.autopistasProvider.registrarConceptosReporte(secciones.insertId, concepto.concepto_general, concepto.valor_ponderado, concepto.calificacionGeneral)
 									.then((conceptos) => {
 										concepto.factores.map((factor) => {
+											// console.log(factor);
 											this.autopistasProvider.registrarFactoresReporte(conceptos.insertId, factor.id,
-												factor.elemento, factor.factor_elemento, factor.valorParticularDiferencia).then((factores) => {})
+												factor.elemento, factor.factor_elemento, factor.valorParticularDiferencia, factor.calificacionParticular).then((factores) => {})
 										})
 									})
 							})

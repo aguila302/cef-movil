@@ -325,16 +325,18 @@ export class CatalogosApiProvider {
 
 	/* Sincronizar las secciones para el reporte al end point del api.
 	 */
-	async sincronizarSeccionesReporte(accessToken, autopistaId, seccionId, seccion) {
+	async sincronizarSeccionesReporte(accessToken, autopistaId, seccionId, seccion, uuid, calificacionTramo) {
 		let data = {
 			autopista_id: autopistaId,
 			seccion_id: seccionId,
-			seccion: seccion
+			seccion: seccion,
+			uuid: uuid,
+			calificacion_tramo: calificacionTramo
 		}
 		let headers = {
 			'Authorization': `Bearer ${accessToken}`,
 			'Accept': 'application/json',
-			'Content-Type': 'multipart/form-data'
+			// 'Content-Type': 'multipart/form-data'
 		}
 
 		return this.http.post(`${URL_BASE}/api/reporte-secciones`, data, headers)
@@ -345,8 +347,6 @@ export class CatalogosApiProvider {
 					'headers': data.headers
 				}
 			}).catch(error => {
-				console.log(error);
-
 				return {
 					'status': error.status,
 					'data': JSON.parse(error.error),
@@ -356,11 +356,13 @@ export class CatalogosApiProvider {
 
 	}
 
-	async sincronizarConceptosReporte(accessToken, reporteSeccionesId, conceptoGeneral, valorPonderado) {
+	async sincronizarConceptosReporte(accessToken, reporteSeccionesId, conceptoGeneral, valorPonderado, calificacionGeneral) {
+		console.log('conceptos api ' + reporteSeccionesId, conceptoGeneral, valorPonderado, calificacionGeneral)
 		let data = {
 			reporte_secciones_id: reporteSeccionesId,
 			concepto_general: conceptoGeneral,
-			valor_ponderado: valorPonderado
+			valor_ponderado: valorPonderado,
+			calificacion_general: calificacionGeneral
 		}
 		let headers = {
 			'Authorization': `Bearer ${accessToken}`,
@@ -384,13 +386,17 @@ export class CatalogosApiProvider {
 			})
 	}
 
-	async sincronizarFactoresReporte(accessToken, reporteConceptosId, elementoId, elemento, factorElemento, valorParticular) {
+	sincronizarFactoresReporte(accessToken, reporteConceptosId, elementoId, elemento, factorElemento, valorParticular, calificacionParticular) {
+		console.log('factores ' + reporteConceptosId, elementoId, elemento, factorElemento, valorParticular, calificacionParticular);
+
+
 		let data = {
 			reporte_conceptos_id: reporteConceptosId,
 			elemento_id: elementoId,
 			elemento: elemento,
 			factor_elemento: factorElemento,
-			valor_particular: valorParticular
+			valor_particular: valorParticular,
+			calificacion_particular: calificacionParticular
 		}
 		let headers = {
 			'Authorization': `Bearer ${accessToken}`,

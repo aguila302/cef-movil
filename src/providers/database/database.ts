@@ -48,7 +48,6 @@ export class DatabaseProvider {
 				// }).then(() => {
 				//     console.log('databa se eleimanda')
 				// })
-
 				/* Diseñar las tablas del origen de datos. */
 				this.crearTablas().then((res) => {
 					this.dbReady.next(true)
@@ -686,13 +685,16 @@ export class DatabaseProvider {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 autopista_id INTEGER,
                 seccion_id INTEGER,
-                seccion TEXT);`)
+                seccion TEXT,
+                calificacion_tramo FLOAT,
+                uuid TEXT);`)
 
 			tx.executeSql(`CREATE TABLE IF NOT EXISTS reporte_conceptos (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 reporte_secciones_id INTEGER,
                 concepto_general TEXT,
-                valor_ponderado FLOAT);`)
+                valor_ponderado FLOAT,
+                calificacion_general FLOAT);`)
 
 			tx.executeSql(`CREATE TABLE IF NOT EXISTS reporte_factores (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -700,7 +702,8 @@ export class DatabaseProvider {
                         elemento_id INTEGER,
                         elemento TEXT,
                         factor_elemento FLOAT,
-                        valor_particular FLOAT
+                        valor_particular FLOAT,
+                        calificacion_particular FLOAT
                         );`)
 		})
 	}
@@ -720,31 +723,31 @@ export class DatabaseProvider {
 	}
 
 	/* Registrar secciones para el reporte web. */
-	registrarseccionesReporte = (autopista, seccion_id, seccion) => {
+	registrarseccionesReporte = (autopista, seccion_id, seccion, calificacionTramo, uuid) => {
 
-		let paramettros = [autopista, seccion_id, seccion]
+		let paramettros = [autopista, seccion_id, seccion, calificacionTramo, uuid]
 		return this.isReady()
 			.then(() => {
-				return this.database.executeSql(`insert into reporte_secciones (autopista_id, seccion_id, seccion)
-                    values(?,?,?)`, paramettros)
+				return this.database.executeSql(`insert into reporte_secciones (autopista_id, seccion_id, seccion, calificacion_tramo, uuid)
+                    values(?,?,?,?,?)`, paramettros)
 			})
 	}
 
-	registrarConceptosReporte = (seccionId, conceptoGeneral, valorPonderado) => {
-		let paramettros = [seccionId, conceptoGeneral, valorPonderado]
+	registrarConceptosReporte = (seccionId, conceptoGeneral, valorPonderado, calificacionGeneral) => {
+		let paramettros = [seccionId, conceptoGeneral, valorPonderado, calificacionGeneral]
 		return this.isReady()
 			.then(() => {
-				return this.database.executeSql(`insert into reporte_conceptos (reporte_secciones_id, concepto_general, valor_ponderado)
-                    values(?,?,?)`, paramettros)
-			})
-	}
-
-	registrarFactoresReporte = (conceptoId, elementoId, elemento, factor_Elemento, valor_particular) => {
-		let paramettros = [conceptoId, elementoId, elemento, factor_Elemento]
-		return this.isReady()
-			.then(() => {
-				return this.database.executeSql(`insert into reporte_factores (reporte_conceptos_id, elemento_id, elemento, factor_elemento)
+				return this.database.executeSql(`insert into reporte_conceptos (reporte_secciones_id, concepto_general, valor_ponderado, calificacion_general)
                     values(?,?,?,?)`, paramettros)
+			})
+	}
+
+	registrarFactoresReporte = (conceptoId, elementoId, elemento, factorElemento, valor_Particular, calificacionParticular) => {
+		let paramettros = [conceptoId, elementoId, elemento, factorElemento, valor_Particular, calificacionParticular]
+		return this.isReady()
+			.then(() => {
+				return this.database.executeSql(`insert into reporte_factores (reporte_conceptos_id, elemento_id, elemento, factor_elemento, valor_particular, calificacion_particular)
+                    values(?,?,?,?,?,?)`, paramettros)
 			})
 	}
 
@@ -765,7 +768,7 @@ export class DatabaseProvider {
 	obtenerConceptosReporte = (seccionId) => {
 		return this.isReady()
 			.then(() => {
-				return this.database.executeSql(`select * from reporte_conceptos WHERE reporte_secciones_id = ${seccionId} order by id DESC`, [])
+				return this.database.executeSql(`select * from reporte_conceptos WHERE reporte_secciones_id = ${seccionId}`, [])
 					.then((data) => {
 						let conceptos = []
 						for (let i = 0; i < data.rows.length; i++) {

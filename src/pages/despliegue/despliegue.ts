@@ -72,47 +72,55 @@ export class DesplieguePage {
 								calificacion.data = response['data']
 							})
 					})
+
 					/* Obtener las secciones del origen de datos. */
 					this.autopistasProvider.obtenerSeccionesReporte(this.autopista).then((secciones) => {
 						// console.log(secciones);
 						secciones.forEach((seccion) => {
+							// console.log(seccion);
+
 							/* Sincronizar la iformacion para el reporte. */
 							this.catalogosApi.sincronizarSeccionesReporte(usuario.access_token,
-								seccion.autopista_id, seccion.seccion_id, seccion.seccion).then(() => {
-
-								/* Obtener conceptos de las secciones. */
-								this.autopistasProvider.obtenerConceptosReporte(seccion.id).then((conceptos) => {
-									conceptos.map((concepto) => {
-										console.log(concepto);
-
-										this.catalogosApi.sincronizarConceptosReporte(usuario.access_token, concepto.reporte_secciones_id, concepto.concepto_general, concepto.valor_ponderado)
-											.then((response) => {
-												// console.log(response);
-												/* Obtener factores de las secciones. */
-												this.autopistasProvider.obtenerFactoresReporte(concepto.id)
-													.then((factores) => {
-														console.log(factores);
-
-														factores.map((factor) => {
-															console.log(factor);
-															setTimeout(() => {
-																this.catalogosApi.sincronizarFactoresReporte(
-																	usuario.access_token,
-																	factor.reporte_conceptos_id,
-																	factor.elemento_id,
-																	factor.elemento,
-																	factor.factor_elemento,
-																	factor.valor_particular
-																).then((response) => {
-																	console.log(response);
-
-																})
-															}, 1000)
-														})
+								seccion.autopista_id, seccion.seccion_id, seccion.seccion, seccion.uuid, seccion.calificacion_tramo).then((response) => {
+								// console.log(response);
+								if (response.status !== 422) {
+									//	console.log('ya sincronización');
+									/* Obtener conceptos de las secciones. */
+									this.autopistasProvider.obtenerConceptosReporte(seccion.id).then((conceptos) => {
+										conceptos.map((concepto) => {
+											console.log(concepto)
+											setTimeout(() => {
+												this.catalogosApi.sincronizarConceptosReporte(usuario.access_token, concepto.reporte_secciones_id, concepto.concepto_general, concepto.valor_ponderado, concepto.calificacion_general)
+													.then((response) => {
+														// console.log(response);
 													})
+											}, 1000)
+											this.autopistasProvider.obtenerFactoresReporte(concepto.id).then((factores) => {
+												// console.log(factores);
+
+												factores.map((factor) => {
+													// setTimeout(() => {
+													// console.log(factor);
+
+													this.catalogosApi.sincronizarFactoresReporte(
+														usuario.access_token,
+														factor.reporte_conceptos_id,
+														factor.elemento_id,
+														factor.elemento,
+														factor.factor_elemento,
+														factor.valor_particular,
+														factor.calificacion_particular
+													).then((response) => {
+
+
+													})
+												})
+												// }, 100)
 											})
+										})
 									})
-								})
+
+								}
 							})
 						})
 					})
