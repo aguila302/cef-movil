@@ -56,8 +56,8 @@ export class AutopistasProvider {
 	}
 
 	/* Guardar calificaciones generales de los elementos. */
-	guardarCalificaciones = (autopistaId, cuerpo, seccion, elementoId, defectoId, intensidadId, calificacion) => {
-		return this.databaseProvider.guardarCalificaciones(autopistaId, cuerpo, seccion, elementoId, defectoId, intensidadId, calificacion)
+	guardarCalificaciones = (autopistaId, cuerpo, seccion, elementoId, defectoId, intensidadId, calificacion, uuid) => {
+		return this.databaseProvider.guardarCalificaciones(autopistaId, cuerpo, seccion, elementoId, defectoId, intensidadId, calificacion, uuid)
 	}
 
 	/* Obtener resumen de calificaciones de una autopista. */
@@ -92,8 +92,8 @@ export class AutopistasProvider {
 		return this.databaseProvider.registrarseccionesReporte(autopista, seccion_id, seccion, calificacionTramo, uuid)
 	}
 
-	registrarConceptosReporte = (seccionId, conceptoGeneral, valorPonderado, calificacionGeneral) => {
-		return this.databaseProvider.registrarConceptosReporte(seccionId, conceptoGeneral, valorPonderado, calificacionGeneral)
+	registrarConceptosReporte = (seccionId, conceptoId, conceptoGeneral, valorPonderado, calificacionGeneral) => {
+		return this.databaseProvider.registrarConceptosReporte(seccionId, conceptoId, conceptoGeneral, valorPonderado, calificacionGeneral)
 	}
 
 	registrarFactoresReporte = (conceptoId, elementoId, elemento, factor_elemento, valor_particular, calificacionParticular) => {

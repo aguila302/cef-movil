@@ -160,14 +160,18 @@ export class RegistrarCalificacionPage {
 
 		loading.present()
 
-		setTimeout(() => {
-			for (let elemento of this.elementos) {
-				for (let defecto of elemento.defectos) {
+		let fechaHoraRegistro: string = ''
+		for (let elemento of this.elementos) {
+			for (let defecto of elemento.defectos) {
+				setTimeout(() => {
+					/* Generamos un uuid para guardar la calificacion. */
+					fechaHoraRegistro = new Date().getTime().toString()
 					this.autopistasProvider.guardarCalificaciones(this.autopistaId, this.filtro.cuerpo,
-						this.filtro.seccion, elemento.id, defecto.id, defecto.intensidad, defecto.calificacion)
-				}
+						this.filtro.seccion, elemento.id, defecto.id, defecto.intensidad, defecto.calificacion, uuid(fechaHoraRegistro, uuid.URL))
+
+				}, 2000);
 			}
-		}, 1000);
+		}
 
 		setTimeout(() => {
 			loading.dismiss()
@@ -197,9 +201,6 @@ export class RegistrarCalificacionPage {
 
 	/* Organizar información para reporte web. */
 	reporteadorWeb = () => {
-
-		console.log('procesar la informacion para mi reporte web')
-
 		this.autopistasProvider.obtenerSeccionReporte(this.filtro.seccion).then((response) => {
 			for (let index of response) {
 				/* Obtener conceptos por cada sección. */
@@ -213,7 +214,6 @@ export class RegistrarCalificacionPage {
 				})
 			}
 			setTimeout(() => {
-				// let coleccionCalificaciones = []
 				this.reporteCalificacionesWeb.length > 0 ? (
 					this.reporteCalificacionesWeb.map((valores) => {
 
@@ -236,14 +236,13 @@ export class RegistrarCalificacionPage {
 					// Iterar el array para registrar la informacion en el origen de datos.
 					//
 					this.reporteCalificacionesWeb.forEach(item => {
-						// console.log(item);
 
 						/* Generamos un uuid para guardar la seccion. */
 						let fechaHoraRegistro = (new Date()).toLocaleDateString('eu-ES') + ' ' + (new Date()).toLocaleTimeString('eu-ES')
 
 						this.autopistasProvider.registrarseccionesReporte(item.autopista_id, item.id, item.seccion, this.calificacionTramo, uuid(fechaHoraRegistro, uuid.URL)).then((secciones) => {
 							item.conceptos.map((concepto) => {
-								this.autopistasProvider.registrarConceptosReporte(secciones.insertId, concepto.concepto_general, concepto.valor_ponderado, concepto.calificacionGeneral)
+								this.autopistasProvider.registrarConceptosReporte(secciones.insertId, concepto.id, concepto.concepto_general, concepto.valor_ponderado, concepto.calificacionGeneral)
 									.then((conceptos) => {
 										concepto.factores.map((factor) => {
 											// console.log(factor);

@@ -59,13 +59,13 @@ export class DatabaseProvider {
 					})
 
 					// /* Exportamos el origen de datos a sql. */
-					// this.sqlitePorter.exportDbToSql(this.database)
-					// 	.then((sql) => {
-					// 		console.log(sql)
-					// 	})
-					// 	.catch(e => {
-					// 		console.error(e)
-					// 	})
+					this.sqlitePorter.exportDbToSql(this.database)
+						.then((sql) => {
+							console.log(sql)
+						})
+						.catch(e => {
+							console.error(e)
+						})
 				})
 			})
 
@@ -188,6 +188,7 @@ export class DatabaseProvider {
                 defecto_id INTEGER,
                 intensidad_id INTEGER,
                 calificacion FLOAT,
+                uuid TEXT,
                 FOREIGN KEY(autopista_id) REFERENCES autopistas(id),
                 FOREIGN KEY(cuerpo_id) REFERENCES cuerpos(id),
                 FOREIGN KEY(seccion_id) REFERENCES secciones(id),
@@ -482,13 +483,13 @@ export class DatabaseProvider {
 	}
 
 	/* Guardar calificaciones generales de los elementos. */
-	guardarCalificaciones = (autopistaId, cuerpo, seccion, elementoId, defectoId, intensidadId, calificacion) => {
-		let parametros = [autopistaId, cuerpo.id, seccion.id, elementoId, defectoId, intensidadId, calificacion]
+	guardarCalificaciones = (autopistaId, cuerpo, seccion, elementoId, defectoId, intensidadId, calificacion, uuid) => {
+		let parametros = [autopistaId, cuerpo.id, seccion.id, elementoId, defectoId, intensidadId, calificacion, uuid]
 
 		return this.isReady()
 			.then(() => {
 				let sql = `insert into calificaciones(autopista_id, cuerpo_id, seccion_id, elemento_id,
-                defecto_id, intensidad_id, calificacion) values (?,?,?,?,?,?,?);`
+                defecto_id, intensidad_id, calificacion, uuid) values (?,?,?,?,?,?,?,?);`
 				return this.database.executeSql(sql, parametros)
 			})
 	}
@@ -522,6 +523,7 @@ export class DatabaseProvider {
 	obtenerConceptosPorSeccion = (autopista, seccionId) => {
 		return this.isReady().then(() => {
 			return this.database.executeSql(`select
+                    t7.id,
                     t7.descripcion as concepto_general,
                     t6.valor_ponderado as valor_ponderado,
                     t6.id as valor_ponderado_id
@@ -538,6 +540,7 @@ export class DatabaseProvider {
 						this.obtenerConceptosGeneralesPorValorPonderado(autopista.id, seccionId, conceptos.rows.item(i).valor_ponderado_id)
 							.then((factores) => {
 								listaDeconceptos.push({
+									id: conceptos.rows.item(i).id,
 									concepto_general: conceptos.rows.item(i).concepto_general,
 									valor_ponderado: conceptos.rows.item(i).valor_ponderado,
 									valor_ponderado_id: conceptos.rows.item(i).valor_ponderado_id,
@@ -653,7 +656,7 @@ export class DatabaseProvider {
 			return this.database.executeSql(`select t2.descripcion as cuerpo, t1.cuerpo_id as cuerpo_id,
             t3.cadenamiento_inicial_km || ' - ' || t3.cadenamiento_inicial_m || ' + ' || t3.cadenamiento_final_km || ' - ' || t3.cadenamiento_final_m as seccion,
             t1.seccion_id as seccion_id, t4.descripcion as elemento, t1.elemento_id as elemento_id, t5.descripcion as defecto, t1.defecto_id as defecto_id,
-            t6.descripcion as intensidad, t1.intensidad_id as intensidad_id, t1.calificacion as calificacion
+            t6.descripcion as intensidad, t1.intensidad_id as intensidad_id, t1.calificacion as calificacion, t1.uuid as uuid
             from calificaciones t1
             inner join cuerpos t2
             on t1.cuerpo_id = t2.id
@@ -669,8 +672,6 @@ export class DatabaseProvider {
 				.then((calificaciones) => {
 					let listaDecalificaciones = []
 					for (let i = 0; i < calificaciones.rows.length; i++) {
-
-
 						listaDecalificaciones.push(calificaciones.rows.item(i))
 					}
 					return listaDecalificaciones
@@ -684,7 +685,7 @@ export class DatabaseProvider {
 			tx.executeSql(`CREATE TABLE IF NOT EXISTS reporte_secciones (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 autopista_id INTEGER,
-                seccion_id INTEGER,
+            seccion_id INTEGER,
                 seccion TEXT,
                 calificacion_tramo FLOAT,
                 uuid TEXT);`)
@@ -692,6 +693,7 @@ export class DatabaseProvider {
 			tx.executeSql(`CREATE TABLE IF NOT EXISTS reporte_conceptos (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 reporte_secciones_id INTEGER,
+                concepto_id INTEGER,
                 concepto_general TEXT,
                 valor_ponderado FLOAT,
                 calificacion_general FLOAT);`)
@@ -733,12 +735,12 @@ export class DatabaseProvider {
 			})
 	}
 
-	registrarConceptosReporte = (seccionId, conceptoGeneral, valorPonderado, calificacionGeneral) => {
-		let paramettros = [seccionId, conceptoGeneral, valorPonderado, calificacionGeneral]
+	registrarConceptosReporte = (seccionId, conceptoId, conceptoGeneral, valorPonderado, calificacionGeneral) => {
+		let paramettros = [seccionId, conceptoId, conceptoGeneral, valorPonderado, calificacionGeneral]
 		return this.isReady()
 			.then(() => {
-				return this.database.executeSql(`insert into reporte_conceptos (reporte_secciones_id, concepto_general, valor_ponderado, calificacion_general)
-                    values(?,?,?,?)`, paramettros)
+				return this.database.executeSql(`insert into reporte_conceptos (reporte_secciones_id, concepto_id, concepto_general, valor_ponderado, calificacion_general)
+                    values(?,?,?,?,?)`, paramettros)
 			})
 	}
 
@@ -752,17 +754,26 @@ export class DatabaseProvider {
 	}
 
 	obtenerSeccionesReporte = (autopista) => {
-		return this.isReady()
-			.then(() => {
-				return this.database.executeSql(`select * from reporte_secciones WHERE autopista_id = ${autopista.id}`, [])
-					.then((data) => {
-						let secciones = []
-						for (let i = 0; i < data.rows.length; i++) {
-							secciones.push(data.rows.item(i))
-						}
-						return secciones
-					})
-			})
+		return this.isReady().then(() => {
+			return this.database.executeSql(`select * from reporte_secciones WHERE autopista_id = ${autopista.id}`, [])
+				.then((data) => {
+					let secciones = []
+					for (let i = 0; i < data.rows.length; i++) {
+						this.obtenerConceptosReporte(data.rows.item(i).id).then((conceptos) => {
+							secciones.push({
+								autopista_id: data.rows.item(i).autopista_id,
+								seccion_id: data.rows.item(i).seccion_id,
+								seccion: data.rows.item(i).seccion,
+								uuid: data.rows.item(i).uuid,
+								calificacion_tramo: data.rows.item(i).calificacion_tramo,
+								conceptos: conceptos
+							})
+
+						})
+					}
+					return secciones
+				})
+		})
 	}
 
 	obtenerConceptosReporte = (seccionId) => {
@@ -772,7 +783,16 @@ export class DatabaseProvider {
 					.then((data) => {
 						let conceptos = []
 						for (let i = 0; i < data.rows.length; i++) {
-							conceptos.push(data.rows.item(i))
+							this.obtenerFactoresReporte(data.rows.item(i).id).then((factores) => {
+								conceptos.push({
+									id: data.rows.item(i).id,
+									reporte_secciones_id: data.rows.item(i).reporte_secciones_id,
+									concepto_general: data.rows.item(i).concepto_general,
+									valor_ponderado: data.rows.item(i).valor_ponderado,
+									calificacion_general: data.rows.item(i).calificacion_general,
+									factores: factores
+								})
+							})
 						}
 						return conceptos
 					})

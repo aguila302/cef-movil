@@ -28,11 +28,10 @@ export class DesplieguePage {
 	nombreAutopista: string = ''
 	autopista: Object = {}
 	calificaciones = []
+	calificacionesParaReporte = []
 
 	constructor(public navCtrl: NavController, public navParams: NavParams, private autopistasProvider: AutopistasProvider,
 		public popoverCtrl: PopoverController, private catalogosApi: CatalogosApiProvider, private storage: Storage) {
-		// this.autopistaId = this.navParams.get('autopista').id
-		// this.nombreAutopista = this.navParams.get('autopista').descripcion
 		this.autopista = this.navParams.get('autopista')
 
 	}
@@ -45,8 +44,6 @@ export class DesplieguePage {
 	obtenerCalificaciones = () => {
 		this.autopistasProvider.obtenerCalificacionesXAutopista(this.autopista).then((calificaciones) => {
 			this.calificaciones = calificaciones
-			// console.log(this.calificaciones);
-
 		})
 	}
 
@@ -63,45 +60,36 @@ export class DesplieguePage {
 			data !== null ? (
 				this.storage.get('auth').then((usuario) => {
 					this.calificaciones.map((calificacion) => {
+
 						calificacion['estatusApi'] = ''
 						calificacion['data'] = {}
+						setTimeout(() => {
+							this.catalogosApi.sincronizarCalificaciones(this.autopista, calificacion, usuario.access_token)
+								.then((response) => {
+									calificacion.estatusApi = response['status']
+									calificacion.data = response['data']
+								})
 
-						this.catalogosApi.sincronizarCalificaciones(this.autopista, calificacion, usuario.access_token)
-							.then((response) => {
-								calificacion.estatusApi = response['status']
-								calificacion.data = response['data']
-							})
+						}, 1000)
 					})
 
 					/* Obtener las secciones del origen de datos. */
 					this.autopistasProvider.obtenerSeccionesReporte(this.autopista).then((secciones) => {
-						// console.log(secciones);
-						secciones.forEach((seccion) => {
-							// console.log(seccion);
+						setTimeout(() => {
+							secciones.forEach((seccion) => {
 
-							/* Sincronizar la iformacion para el reporte. */
-							this.catalogosApi.sincronizarSeccionesReporte(usuario.access_token,
-								seccion.autopista_id, seccion.seccion_id, seccion.seccion, seccion.uuid, seccion.calificacion_tramo).then((response) => {
-								// console.log(response);
-								if (response.status !== 422) {
-									//	console.log('ya sincronización');
-									/* Obtener conceptos de las secciones. */
-									this.autopistasProvider.obtenerConceptosReporte(seccion.id).then((conceptos) => {
-										conceptos.map((concepto) => {
-											console.log(concepto)
-											setTimeout(() => {
-												this.catalogosApi.sincronizarConceptosReporte(usuario.access_token, concepto.reporte_secciones_id, concepto.concepto_general, concepto.valor_ponderado, concepto.calificacion_general)
+								this.catalogosApi.sincronizarSeccionesReporte(usuario.access_token,
+										seccion.autopista_id, seccion.seccion_id, seccion.seccion, seccion.uuid, seccion.calificacion_tramo)
+									.then((response) => {
+										if (response.status !== 422) {
+											seccion.conceptos.map((concepto) => {
+												this.catalogosApi.sincronizarConceptosReporte(usuario.access_token,
+														concepto.reporte_secciones_id, concepto.id, concepto.concepto_general,
+														concepto.valor_ponderado, concepto.calificacion_general)
 													.then((response) => {
-														// console.log(response);
+
 													})
-											}, 1000)
-											this.autopistasProvider.obtenerFactoresReporte(concepto.id).then((factores) => {
-												// console.log(factores);
-
-												factores.map((factor) => {
-													// setTimeout(() => {
-													// console.log(factor);
-
+												concepto.factores.map((factor) => {
 													this.catalogosApi.sincronizarFactoresReporte(
 														usuario.access_token,
 														factor.reporte_conceptos_id,
@@ -112,17 +100,15 @@ export class DesplieguePage {
 														factor.calificacion_particular
 													).then((response) => {
 
-
 													})
 												})
-												// }, 100)
+
 											})
-										})
+										}
 									})
 
-								}
 							})
-						})
+						}, 1000)
 					})
 				})
 			) : ''

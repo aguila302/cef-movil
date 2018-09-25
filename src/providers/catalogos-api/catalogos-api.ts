@@ -38,8 +38,6 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
-				console.log(error);
-
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -62,7 +60,6 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
-				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -84,7 +81,6 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
-				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -106,7 +102,6 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
-				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -128,7 +123,6 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
-				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -150,7 +144,6 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
-				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -173,7 +166,6 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
-				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -195,7 +187,6 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
-				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -218,7 +209,6 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
-				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -240,7 +230,6 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
-				console.log(error);
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -262,7 +251,6 @@ export class CatalogosApiProvider {
 				}
 
 			}).catch(error => {
-				console.log(JSON.parse(error.error));
 				return {
 					status: error.status,
 					data: JSON.parse(error.error),
@@ -280,14 +268,11 @@ export class CatalogosApiProvider {
 			defecto_id: calificaciones.defecto_id,
 			intensidad_id: calificaciones.intensidad_id,
 			calificacion: calificaciones.calificacion,
+			uuid: calificaciones.uuid,
 		}
 
 		await this.resolveApi(data, accessToken).then((response) => {
-			// console.log(response)
-
 			this.responseResult = response
-			// console.log(response);
-
 		}).catch(error => {
 			console.error.bind(console)
 		})
@@ -298,8 +283,6 @@ export class CatalogosApiProvider {
 	 * Realiza un resolve al end point y sincroniza la informacion de los levantamientos.
 	 */
 	async resolveApi(data, accessToken) {
-		/* Obtener token de acceso de un usuario. */
-
 		let headers = {
 			'Authorization': `Bearer ${accessToken}`,
 			'Accept': 'application/json',
@@ -325,7 +308,7 @@ export class CatalogosApiProvider {
 
 	/* Sincronizar las secciones para el reporte al end point del api.
 	 */
-	async sincronizarSeccionesReporte(accessToken, autopistaId, seccionId, seccion, uuid, calificacionTramo) {
+	sincronizarSeccionesReporte(accessToken, autopistaId, seccionId, seccion, uuid, calificacionTramo) {
 		let data = {
 			autopista_id: autopistaId,
 			seccion_id: seccionId,
@@ -336,7 +319,6 @@ export class CatalogosApiProvider {
 		let headers = {
 			'Authorization': `Bearer ${accessToken}`,
 			'Accept': 'application/json',
-			// 'Content-Type': 'multipart/form-data'
 		}
 
 		return this.http.post(`${URL_BASE}/api/reporte-secciones`, data, headers)
@@ -356,13 +338,13 @@ export class CatalogosApiProvider {
 
 	}
 
-	async sincronizarConceptosReporte(accessToken, reporteSeccionesId, conceptoGeneral, valorPonderado, calificacionGeneral) {
-		console.log('conceptos api ' + reporteSeccionesId, conceptoGeneral, valorPonderado, calificacionGeneral)
+	sincronizarConceptosReporte(accessToken, reporteSeccionesId, conceptoId, conceptoGeneral, valorPonderado, calificacionGeneral) {
 		let data = {
 			reporte_secciones_id: reporteSeccionesId,
 			concepto_general: conceptoGeneral,
 			valor_ponderado: valorPonderado,
-			calificacion_general: calificacionGeneral
+			calificacion_general: calificacionGeneral,
+			concepto_id: conceptoId
 		}
 		let headers = {
 			'Authorization': `Bearer ${accessToken}`,
@@ -387,9 +369,6 @@ export class CatalogosApiProvider {
 	}
 
 	sincronizarFactoresReporte(accessToken, reporteConceptosId, elementoId, elemento, factorElemento, valorParticular, calificacionParticular) {
-		console.log('factores ' + reporteConceptosId, elementoId, elemento, factorElemento, valorParticular, calificacionParticular);
-
-
 		let data = {
 			reporte_conceptos_id: reporteConceptosId,
 			elemento_id: elementoId,
