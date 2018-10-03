@@ -3,7 +3,7 @@
     <name>cef-movil</name>
     <description>An awesome Ionic/Cordova app.</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
-    <content original-src="index.html" src="http://11.11.2.49:8100" />
+    <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -92,4 +92,6 @@
     <allow-navigation href="http://192.168.109.201:8100" />
     <allow-navigation href="http://192.168.137.13:8100" />
     <engine name="android" spec="^7.1.1" />
+    <allow-navigation href="http://192.168.109.230:8100" />
+    <allow-navigation href="http://192.168.0.108:8100" />
 </widget>

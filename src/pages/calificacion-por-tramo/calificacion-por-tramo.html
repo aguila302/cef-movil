@@ -42,4 +42,75 @@
             </ion-col>
         </ion-row>
     </form>
+    <hr>
+    <ion-item-group no-padding *ngFor="let seccion of listaCalificaciones">
+        <ion-item-divider text-wrap text-center color="light">
+            Sección {{ seccion.seccion }}
+        </ion-item-divider>
+        <ion-row>
+            <ion-col col-12 text-center [ngClass]="'cabezera'">
+                <small>Longitud en kilometros</small>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col col-12 text-center>
+                <small>{{ seccion.longitud | number }}</small>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col col-12 text-center [ngClass]="'cabezera'">
+                <small>Calificación ponderada</small>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col col-12 text-center>
+                <small>{{ seccion.calificacion_ponderada }}</small>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col col-12 text-center [ngClass]="'cabezera'">
+                <small>Estado fisico</small>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col col-12 text-center>
+                <small *ngIf="seccion.calificacion_ponderada < seccion.inicio" [ngStyle]="{'color':'#F44336'}">M</small>
+                <small *ngIf="seccion.calificacion_ponderada >= seccion.inicio && seccion.calificacion_ponderada < seccion.fin" [ngStyle]="{'color':'#FFEB3B'}">R</small>
+                <small *ngIf="seccion.calificacion_ponderada >= seccion.fin" [ngStyle]="{'color':'#66BB6A'}">B</small>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col col-12 text-center [ngClass]="'cabezera'">
+                <small>Calificación por elemento</small>
+            </ion-col>
+        </ion-row>
+        <ion-row *ngFor="let elemento of seccion.calificacionPonderada">
+            <ion-col col-8 text-left>
+                {{ elemento.elemento }}
+            </ion-col>
+            <ion-col col-2 text-center>
+                {{ elemento.calificacion_total }}
+            </ion-col>
+            <ion-col col-1 text-center>
+                <fa-icon *ngIf="elemento.calificacion_total < elemento.inicio" [ngStyle]="{'color':'#F44336'}" [icon]="['fas', 'circle']"></fa-icon>
+                <fa-icon *ngIf="elemento.calificacion_ponderada >= elemento.inicio && elemento.calificacion_ponderada < elemento.fin" [ngStyle]="{'color':'#FFEB3B'}" [icon]="['fas', 'circle']"></fa-icon>
+                <fa-icon *ngIf="elemento.calificacion_ponderada >= elemento.fin" [ngStyle]="{'color':'#66BB6A'}" [icon]="['fas', 'circle']"></fa-icon>
+            </ion-col>
+            <ion-col col-1 text-center>
+                <small *ngIf="elemento.calificacion_total < elemento.inicio" [ngStyle]="{'color':'#F44336'}">M</small>
+                <small *ngIf="elemento.calificacion_ponderada >= elemento.inicio && elemento.calificacion_ponderada < elemento.fin" [ngStyle]="{'color':'#F44336'}">R</small>
+                <small *ngIf="elemento.calificacion_ponderada >= elemento.fin" [ngStyle]="{'color':'#F44336'}">B</small>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col col-12 text-center [ngClass]="'cabezera'">
+                <small>Promedios ponderados</small>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col col-12 text-center>
+                {{ promediosPonderados }}
+            </ion-col>
+        </ion-row>
+    </ion-item-group>
 </ion-content>

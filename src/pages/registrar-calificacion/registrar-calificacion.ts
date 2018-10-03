@@ -120,31 +120,42 @@ export class RegistrarCalificacionPage {
 		modalCalificcion.onDidDismiss(data => {
 			let elementoCalificado = []
 			let sumaCalificacion: number = 0
+			data.calificacion !== '' ? (
+				/* Si hay calificación para dicho defecto obtener su elemento correspondiente a esta calificación */
+				data ? (
+					elementoCalificado = this.elementos.filter(function(elemento) {
+						return elemento.id === data.intensidad.elemento_id
+					}),
 
-			/* Si hay calificación para dicho defecto obtener su elemento correspondiente a esta calificación */
-			data ? (
-				elementoCalificado = this.elementos.filter(function(elemento) {
-					return elemento.id === data.intensidad.elemento_id
-				}),
+					elementoCalificado.map((elemento) => {
+						elemento['valorCalificacionMinuendo'] = elemento.defectos[0].calificacion
+						let excluido = elemento.defectos.slice(1)
+						console.log(elemento);
 
-				elementoCalificado.map((elemento) => {
-					elemento.defectos.map((defecto) => {
+						let suma = collect(excluido).sum('calificacion')
+						elemento['valorCalificacionSustraendo'] = suma
 
-						/* Obtener defecto a calificar. */
-						if (defecto.id == data.intensidad.rangos[0].defecto_id) {
-							if (defecto.calificacion != 0) {
-								defecto.calificacion = 0
+						elemento.defectos.map((defecto) => {
+							console.log(defecto);
+							/* Obtener defecto a calificar. */
+							if (defecto.id == data.intensidad.rangos[0].defecto_id) {
+								if (defecto.calificacion != 0) {
+									defecto.calificacion = 0
+								}
+								defecto.intensidad = intensidad.id
+								/* Asignar calificación a un defecto. */
+								defecto.calificacion = parseFloat(data.calificacion)
 							}
-							defecto.intensidad = intensidad.id
-							/* Asignar calificación a un defecto. */
-							defecto.calificacion = parseFloat(data.calificacion)
-						}
-						/* Obtener calificacion total por elemento. */
-						sumaCalificacion += parseFloat(defecto.calificacion)
-						elemento.calificacionXElemento = sumaCalificacion
-					})
+							// console.log(defecto);
+							/* Obtener calificacion total por elemento. */
+							sumaCalificacion = elemento.valorCalificacionMinuendo - elemento.valorCalificacionSustraendo
+							console.log(elemento.valorCalificacionMinuendo + '-----' + elemento.valorCalificacionSustraendo);
+							elemento.calificacionXElemento = sumaCalificacion
+							// sumaCalificacion += parseFloat(defecto.calificacion)
+						})
 
-				})
+					})
+				) : ''
 			) : ''
 		});
 

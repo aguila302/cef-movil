@@ -55,7 +55,6 @@ export class ListadoAutopistasPage {
 
 	/* Resolver al endpoint del api para obtener el listado de autopistas. */
 	obtenerAutopistasApi = () => {
-		console.log('obtener catalogos del api');
 		let usuario = {
 			usuario_id: this.usuario,
 			access_token: this.access_token
@@ -70,7 +69,6 @@ export class ListadoAutopistasPage {
 		loader.present();
 
 		/* Obtener datos del usuario conectado. */
-		// this.storage.get('auth').then((usuario) => {
 		/* Obtener los catalogos al endpoint del api. */
 		this.catalogosProvider.descargarCatalogos(usuario).then((response) => {
 			console.log('mi respuesta de la descarga');
@@ -82,16 +80,11 @@ export class ListadoAutopistasPage {
 				loader.dismiss()
 			}, 4000)
 		})
-		// }).catch((error) => {
-		// 	console.error.bind(error)
-		// })
 	}
 
 	/* Obtener un listado de autopistas de un usuario en el origen de datros. */
 	obtenerAutopistasOrigenDeDatos = () => {
-		console.log('obtener catalogos del origen de datos');
 		this.storage.get('auth').then((response) => {
-
 			this.autopistasProvider.obtenerAutopistasOrigenDeDatos(response).then((response) => {
 				this.zone.run(() => {
 					this.autopistas = response
@@ -118,7 +111,7 @@ export class ListadoAutopistasPage {
 						})
 					}
 				}, {
-					text: 'Resumen de calificación',
+					text: 'Resumen de calificación general',
 					role: 'destructive',
 					handler: () => {
 						/* Mostrar el componente de resumen de calificaciones. */
@@ -131,10 +124,23 @@ export class ListadoAutopistasPage {
 						})
 					}
 				}, {
+					text: 'Resumen de calificación por sección',
+					role: 'destructive',
+					handler: () => {
+						/* Mostrar el componente de resumen de calificaciones. */
+						this.navCtrl.push('CalificacionPorTramoPage', {
+							autopista
+						}, {
+							animate: true,
+							animation: 'ios-transition',
+							direction: 'forward'
+						})
+					}
+				}, {
 					text: 'Sincronizar información',
 					role: 'destructive',
 					handler: () => {
-						/* Mostrar el componente de calificacion por tramo. */
+						/* Mostrar el componente de despliegue de calificaciones. */
 						this.navCtrl.push('DesplieguePage', {
 							autopista,
 							access_token: this.access_token

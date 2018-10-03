@@ -76,8 +76,8 @@ export class AutopistasProvider {
 	}
 
 	/* Obtener calificaciones de una autopista por tramo y por sección */
-	consultarCalificacionesXTramo = (filtros) => {
-		return this.databaseProvider.consultarCalificacionesXTramo(filtros)
+	consultarCalificacionesXTramo = (filtros, autopistaId) => {
+		return this.databaseProvider.consultarCalificacionesXTramo(filtros, autopistaId)
 	}
 
 	/* Obtener listado de calificaciones por autopista. */

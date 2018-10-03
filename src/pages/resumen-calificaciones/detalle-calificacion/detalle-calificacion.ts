@@ -28,10 +28,12 @@ export class DetalleCalificacionPage {
 	procesarCalificaciones = () => {
 		let coleccionCalificaciones = collect(this.calificacion['conceptos'])
 		coleccionCalificaciones.map(item => {
+
 			item.factores.map((factor) => {
 				factor.valorParticularMinuendo = factor.valor_particular[0].valor_particular
 				let excluido = factor.valor_particular.slice(1)
 				let suma = collect(excluido).sum('valor_particular')
+
 				factor.valorParticularSustraendo = suma
 				factor.valorParticularDiferencia = factor.valorParticularMinuendo - factor.valorParticularSustraendo
 				factor.calificacionParticular = factor.factor_elemento * factor.valorParticularDiferencia
@@ -39,7 +41,9 @@ export class DetalleCalificacionPage {
 			let sumaCalificacionParticular = collect(item.factores).sum('calificacionParticular')
 
 			item.calificacionGeneral = sumaCalificacionParticular
+			item['calificacion_ponderada_tramo'] = item.valor_ponderado * item.calificacionGeneral
+			console.log(item)
 		});
-		this.calificacionTramo = coleccionCalificaciones.sum('calificacionGeneral')
+		this.calificacionTramo = coleccionCalificaciones.sum('calificacion_ponderada_tramo')
 	}
 }

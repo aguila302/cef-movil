@@ -9,6 +9,7 @@ import {
 import {
 	AutopistasProvider
 } from '../../providers/aplicacion/autopistas'
+import * as collect from 'collect.js/dist'
 
 @IonicPage()
 @Component({
@@ -21,6 +22,8 @@ export class CalificacionPorTramoPage {
 	autopistaId: number = 0
 	nombreAutopista: string = ''
 	secciones = []
+	listaCalificaciones = []
+	promediosPonderados: number = 0
 	cuerpos = []
 	filtro = {
 		cuerpo: '',
@@ -55,9 +58,22 @@ export class CalificacionPorTramoPage {
 
 	/* Obtener calificaciones por tramo. */
 	consultarCalificacionesXTramo = () => {
-		this.autopistasProvider.consultarCalificacionesXTramo(this.filtro).then((secciones) => {
-			console.log(secciones)
+		this.autopistasProvider.consultarCalificacionesXTramo(this.filtro, this.autopistaId).then((secciones) => {
+			setTimeout(() => {
+				secciones.forEach((seccion) => {
 
+					seccion.calificacionPonderada.map((item) => {
+						seccion['calificacion_ponderada'] = item.factor_elemento * item.calificacion_total
+					})
+					this.listaCalificaciones.push(seccion)
+				})
+
+				let promedios = collect(this.listaCalificaciones)
+				this.promediosPonderados = (promedios.sum('calificacion_ponderada') / promedios.count())
+
+				console.log(this.listaCalificaciones);
+
+			}, 1000)
 		})
 	}
 }
