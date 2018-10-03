@@ -43,6 +43,7 @@ export class CalificarIntensidadPage {
 	calificacionFinal = 0
 	nombreIntensidad: string = ''
 	form: FormGroup
+	calificaionCero: number
 
 	constructor(public navCtrl: NavController, public navParams: NavParams, public view: ViewController) {
 		this.intensidad = this.navParams.get('intensidad')
@@ -50,6 +51,9 @@ export class CalificarIntensidadPage {
 		this.nombreIntensidad = this.navParams.get('intensidad').descripcion
 		this.calificacionInicial = this.navParams.get('intensidad').rangos[0].rango_inicial
 		this.calificacionFinal = this.navParams.get('intensidad').rangos[0].rango_final
+
+		this.calificacionInicial === 0 && this.calificacionFinal === 0 ? this.calificaionCero = 0 : ''
+
 	}
 
 	/* inicial el componenete form reactive. */

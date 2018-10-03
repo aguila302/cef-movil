@@ -62,9 +62,9 @@ export class RegistrarCalificacionPage {
 	ionViewDidLoad() {
 		/* Obtener listado de secciones. */
 		this.autopistasProvider.obtenerSecciones(this.autopistaId).then((secciones) => {
-			this.secciones = secciones
-		})
-		/* Obtener listado de cuerpos. */
+				this.secciones = secciones
+			})
+			/* Obtener listado de cuerpos. */
 		this.autopistasProvider.obtenerCuerpos().then((cuerpos) => {
 			this.cuerpos = cuerpos
 		})
@@ -128,32 +128,24 @@ export class RegistrarCalificacionPage {
 					}),
 
 					elementoCalificado.map((elemento) => {
+						let suma: number = 0
 						elemento['valorCalificacionMinuendo'] = elemento.defectos[0].calificacion
-						let excluido = elemento.defectos.slice(1)
-						console.log(elemento);
 
-						let suma = collect(excluido).sum('calificacion')
-						elemento['valorCalificacionSustraendo'] = suma
-
+						let excluido = collect(elemento.defectos.slice(1))
 						elemento.defectos.map((defecto) => {
-							console.log(defecto);
 							/* Obtener defecto a calificar. */
 							if (defecto.id == data.intensidad.rangos[0].defecto_id) {
 								if (defecto.calificacion != 0) {
 									defecto.calificacion = 0
 								}
 								defecto.intensidad = intensidad.id
-								/* Asignar calificación a un defecto. */
+									/* Asignar calificación a un defecto. */
 								defecto.calificacion = parseFloat(data.calificacion)
 							}
-							// console.log(defecto);
-							/* Obtener calificacion total por elemento. */
-							sumaCalificacion = elemento.valorCalificacionMinuendo - elemento.valorCalificacionSustraendo
-							console.log(elemento.valorCalificacionMinuendo + '-----' + elemento.valorCalificacionSustraendo);
-							elemento.calificacionXElemento = sumaCalificacion
-							// sumaCalificacion += parseFloat(defecto.calificacion)
 						})
-
+						suma = excluido.sum('calificacion')
+						sumaCalificacion = elemento.defectos[0].calificacion - suma
+						elemento.calificacionXElemento = sumaCalificacion
 					})
 				) : ''
 			) : ''
@@ -189,10 +181,10 @@ export class RegistrarCalificacionPage {
 			this.reporteadorWeb()
 			this.mostrarConfirmacion()
 			this.reporteCalificacionesWeb.splice(0, this.reporteCalificacionesWeb.length)
-			// this.filtro = {
-			// 	cuerpo: '',
-			// 	seccion: '',
-			// }
+				// this.filtro = {
+				// 	cuerpo: '',
+				// 	seccion: '',
+				// }
 		}, 4000)
 	}
 
