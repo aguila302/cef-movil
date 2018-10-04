@@ -42,7 +42,6 @@ export class DetalleCalificacionPage {
 
 			item.calificacionGeneral = sumaCalificacionParticular
 			item['calificacion_ponderada_tramo'] = item.valor_ponderado * item.calificacionGeneral
-			console.log(item)
 		});
 		this.calificacionTramo = coleccionCalificaciones.sum('calificacion_ponderada_tramo')
 	}

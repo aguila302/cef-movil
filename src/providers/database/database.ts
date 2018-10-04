@@ -43,11 +43,11 @@ export class DatabaseProvider {
 				this.database = db
 
 				// this.sqlite.deleteDatabase({
-				// 	name: 'cef.db',
-				// 	location: 'default'
-				// }).then(() => {
-				// 	console.log('database eleimanda')
-				// })
+				// 		name: 'cef.db',
+				// 		location: 'default'
+				// 	}).then(() => {
+				// 		console.log('database eleimanda')
+				// 	})
 				/* Diseñar las tablas del origen de datos. */
 				this.crearTablas().then((res) => {
 					this.dbReady.next(true)

@@ -222,6 +222,7 @@ export class RegistrarCalificacionPage {
 
 						let coleccionCalificaciones = collect(valores.conceptos)
 						coleccionCalificaciones.map(item => {
+
 							item.factores.map((factor) => {
 								factor.valorParticularMinuendo = factor.valor_particular[0].valor_particular
 								let excluido = factor.valor_particular.slice(1)
@@ -233,9 +234,13 @@ export class RegistrarCalificacionPage {
 							let sumaCalificacionParticular = collect(item.factores).sum('calificacionParticular')
 
 							item.calificacionGeneral = sumaCalificacionParticular
+
+							item['calificacion_ponderada_tramo'] = item.valor_ponderado * item.calificacionGeneral
 						});
-						this.calificacionTramo = coleccionCalificaciones.sum('calificacionGeneral')
+
+						this.calificacionTramo = coleccionCalificaciones.sum('calificacion_ponderada_tramo')
 					}),
+
 					// Iterar el array para registrar la informacion en el origen de datos.
 					//
 					this.reporteCalificacionesWeb.forEach(item => {
