@@ -59,11 +59,11 @@ export class DatabaseProvider {
 					})
 
 					// /* Exportamos el origen de datos a sql. */
-					// this.sqlitePorter.exportDbToSql(this.database).then((sql) => {
-					// 	console.log(sql)
-					// }).catch(e => {
-					// 	console.error(e)
-					// })
+					this.sqlitePorter.exportDbToSql(this.database).then((sql) => {
+						console.log(sql)
+					}).catch(e => {
+						console.error(e)
+					})
 				})
 			})
 
@@ -622,29 +622,33 @@ export class DatabaseProvider {
 	}
 
 	/* Obtener calificaciones de una autopista por tramo y por sección en el origen de datos. */
-	consultarCalificacionesXTramo = (filtros, autopistaId) => {
+	consultarCalificacionesXTramo(filtros, autopistaId) {
+		console.log(filtros);
+
+		let listaSecciones = []
 		return this.isReady()
 			.then(() => {
 				return this.database.executeSql(`select t1.seccion_id as seccion_id,
-                    t2.cadenamiento_inicial_km || ' - ' || t2.cadenamiento_inicial_m || ' + ' || t2.cadenamiento_final_km || ' - ' || t2.cadenamiento_final_m as seccion,
-                    (t2.cadenamiento_final_km || t2.cadenamiento_final_m - t2.cadenamiento_inicial_km || t2.cadenamiento_inicial_m) as longitud,
+			t2.cadenamiento_inicial_km || ' - ' || t2.cadenamiento_inicial_m || ' + ' || t2.cadenamiento_final_km || ' - ' || t2.cadenamiento_final_m as seccion,
+                    (t2.cadenamiento_final_km || t2.cadenamiento_final_m - t2.cadenamiento_inicial_km || t2.cadenamiento_inicial_m) / 1000 as longitud,
                     (select 350) as inicio, (select 450) as fin
                     from calificaciones t1
                     inner join secciones t2
                     on t1.seccion_id = t2.id
-                    where t1.autopista_id = ? and t2.cadenamiento_final_km <= ? and t1.cuerpo_id = ?
-                    group by seccion`, [autopistaId, filtros.seccion.cadenamiento_final_km, filtros.cuerpo.id]).then((secciones) => {
-					let listaSecciones = []
+                    where t1.autopista_id = ? and t2.id = ? and t1.cuerpo_id = ?
+                    group by seccion`, [autopistaId, filtros.seccion.id, filtros.cuerpo.id]).then((secciones) => {
+
+					listaSecciones.splice(1, listaSecciones.length)
 					for (let i = 0; i < secciones.rows.length; i++) {
 						/* Obtener calificación porderada por sección. */
-						this.obtenerCalificacionPonderada(secciones.rows.item(i).seccion_id).then((calificacion) => {
+						this.obtenerCalificacionPonderada(secciones.rows.item(i).seccion_id, filtros.cuerpo.id).then((calificacion) => {
 							listaSecciones.push({
 								seccion_id: secciones.rows.item(i).seccion_id,
 								seccion: secciones.rows.item(i).seccion,
 								longitud: secciones.rows.item(i).longitud,
 								calificacionPonderada: calificacion,
 								inicio: secciones.rows.item(i).inicio,
-								fin: secciones.rows.item(i).fin,
+								fin: secciones.rows.item(i).fin
 							});
 						})
 					}
@@ -654,7 +658,7 @@ export class DatabaseProvider {
 	}
 
 	/* Obtener calificación ponderada por sección */
-	obtenerCalificacionPonderada = (seccionId) => {
+	obtenerCalificacionPonderada = (seccionId, cuerpoId) => {
 		return this.isReady().then(() => {
 			return this.database.executeSql(`select t1.elemento_id, t2.descripcion as elemento, t2.factor_elemento as factor_elemento, sum(calificacion) as calificacion_total,
                 CASE WHEN t1.elemento_id == 1 THEN 170.625
@@ -677,11 +681,39 @@ CASE WHEN t1.elemento_id == 1 THEN 219.375
 				.then((calificacionPonderada) => {
 					let ponderacion = []
 					for (let i = 0; i < calificacionPonderada.rows.length; i++) {
-						ponderacion.push(calificacionPonderada.rows.item(i))
+						this.obtenerCalificacionesXElemento(calificacionPonderada.rows.item(i).elemento_id, seccionId, cuerpoId).then((calificaciones) => {
+							ponderacion.push({
+								elemento_id: calificacionPonderada.rows.item(i).elemento_id,
+								elemento: calificacionPonderada.rows.item(i).elemento,
+								factor_elemento: calificacionPonderada.rows.item(i).factor_elemento,
+								calificacion_total: calificacionPonderada.rows.item(i).calificacion_total,
+								inicio: calificacionPonderada.rows.item(i).inicio,
+								final: calificacionPonderada.rows.item(i).final,
+								calificaciones: calificaciones
+							})
+
+						})
 					}
 					return ponderacion
 				})
 		})
+	}
+
+	/* Obtener calificaciones por elemento y sección */
+	obtenerCalificacionesXElemento = (elementoId, seccionId, cuerpoId) => {
+		return this.isReady()
+			.then(() => {
+				let sql = `select * from calificaciones where elemento_id = ? and seccion_id = ? and cuerpo_id = ? order by defecto_id ASC`
+
+				return this.database.executeSql(sql, [elementoId, seccionId, cuerpoId])
+					.then((response) => {
+						let listaDecalificaciones = []
+						for (let i = 0; i < response.rows.length; i++) {
+							listaDecalificaciones.push(response.rows.item(i))
+						}
+						return listaDecalificaciones
+					})
+			})
 	}
 
 	/* Obtener calificaciones de una autopista en el origen de datos. */

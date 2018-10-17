@@ -54,7 +54,7 @@
         </ion-row>
         <ion-row>
             <ion-col col-12 text-center>
-                <small>{{ seccion.longitud | number }}</small>
+                <small>{{ seccion.longitud }}</small>
             </ion-col>
         </ion-row>
         <ion-row>
@@ -64,7 +64,7 @@
         </ion-row>
         <ion-row>
             <ion-col col-12 text-center>
-                <small>{{ seccion.calificacion_ponderada }}</small>
+                <small>{{ seccion.calificacion_ponderada | number }}</small>
             </ion-col>
         </ion-row>
         <ion-row>
@@ -89,7 +89,7 @@
                 {{ elemento.elemento }}
             </ion-col>
             <ion-col col-2 text-center>
-                {{ elemento.calificacion_total }}
+                {{ elemento.calificacion_ponderada_elemento | number }}
             </ion-col>
             <ion-col col-1 text-center>
                 <fa-icon *ngIf="elemento.calificacion_total < elemento.inicio" [ngStyle]="{'color':'#F44336'}" [icon]="['fas', 'circle']"></fa-icon>
@@ -109,7 +109,7 @@
         </ion-row>
         <ion-row>
             <ion-col col-12 text-center>
-                {{ promediosPonderados }}
+                {{ promediosPonderados | number }}
             </ion-col>
         </ion-row>
     </ion-item-group>

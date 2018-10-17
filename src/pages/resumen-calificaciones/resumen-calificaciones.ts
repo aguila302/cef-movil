@@ -14,7 +14,8 @@ import {
 import {
 	IonicPage,
 	NavController,
-	NavParams
+	NavParams,
+	ToastController
 } from 'ionic-angular'
 import {
 	AutopistasProvider
@@ -40,27 +41,41 @@ export class ResumenCalificacionesPage {
 	width: number = 5
 
 	constructor(public navCtrl: NavController, public navParams: NavParams, private autopistasProvider: AutopistasProvider,
-		public zone: NgZone) {
+		public zone: NgZone, private toast: ToastController) {
 		this.autopista = this.navParams.get('autopista')
 	}
 
 	/* Obtener resumen de calificaciones de una autopista. */
 	ionViewDidLoad() {
 		this.autopistasProvider.obtenerCalificaciones(this.autopista).then(response => {
-			this.zone.run(() => {
-
-				for (let index of response) {
-					/* Obtener conceptos por cada sección. */
-					this.autopistasProvider.obtenerConceptosPorSeccion(this.autopista, index.id).then((conceptos) => {
-						this.calificaciones.push({
-							id: index.id,
-							seccion: index.seccion,
-							conceptos: conceptos
+			response.length === 0 ? (this.mensajeAdvertencia()) : (
+				this.zone.run(() => {
+					for (let index of response) {
+						/* Obtener conceptos por cada sección. */
+						this.autopistasProvider.obtenerConceptosPorSeccion(this.autopista, index.id).then((conceptos) => {
+							this.calificaciones.push({
+								id: index.id,
+								seccion: index.seccion,
+								conceptos: conceptos
+							})
 						})
-					})
-				}
-			})
+					}
+				})
+			)
 		})
+	}
+
+	/* Mostrar un mensaje de advertencia de que no hay información para mostrar. */
+	mensajeAdvertencia = () => {
+		let toast = this.toast.create({
+			message: 'No hay información para mostrar',
+			duration: 3000,
+			position: 'middle'
+		})
+
+		toast.present()
+
+		this.navCtrl.pop()
 	}
 
 

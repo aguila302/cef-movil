@@ -19,6 +19,8 @@ export class DetalleCalificacionPage {
 
 	constructor(public navCtrl: NavController, public navParams: NavParams) {
 		this.calificacion = navParams.get('calificacion')
+		console.log(this.calificacion);
+
 	}
 
 	ionViewDidLoad(): void {
@@ -28,7 +30,6 @@ export class DetalleCalificacionPage {
 	procesarCalificaciones = () => {
 		let coleccionCalificaciones = collect(this.calificacion['conceptos'])
 		coleccionCalificaciones.map(item => {
-
 			item.factores.map((factor) => {
 				factor.valorParticularMinuendo = factor.valor_particular[0].valor_particular
 				let excluido = factor.valor_particular.slice(1)
@@ -44,5 +45,8 @@ export class DetalleCalificacionPage {
 			item['calificacion_ponderada_tramo'] = item.valor_ponderado * item.calificacionGeneral
 		});
 		this.calificacionTramo = coleccionCalificaciones.sum('calificacion_ponderada_tramo')
+
+		console.log(coleccionCalificaciones);
+
 	}
 }

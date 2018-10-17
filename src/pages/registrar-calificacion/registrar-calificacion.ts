@@ -20,7 +20,8 @@ import {
 	NavParams,
 	ModalController,
 	ToastController,
-	LoadingController
+	LoadingController,
+	ViewController
 } from 'ionic-angular'
 import {
 	AutopistasProvider
@@ -52,7 +53,7 @@ export class RegistrarCalificacionPage {
 
 	constructor(public navCtrl: NavController, public navParams: NavParams,
 		private autopistasProvider: AutopistasProvider, public modal: ModalController,
-		private toast: ToastController, public loading: LoadingController) {
+		private toast: ToastController, public loading: LoadingController, public view: ViewController) {
 		/* Obtener información de la autopista actual. */
 		this.autopistaId = this.navParams.get('autopista').id
 		this.nombreAutopista = this.navParams.get('autopista').descripcion
@@ -117,7 +118,7 @@ export class RegistrarCalificacionPage {
 		})
 
 		/* Al cerrar el cuadro modal obtener valor de la calificación por defecto seleccionado. */
-		modalCalificcion.onDidDismiss(data => {
+		modalCalificcion.onDidDismiss((data) => {
 			let elementoCalificado = []
 			let sumaCalificacion: number = 0
 			data.calificacion !== '' ? (
@@ -143,13 +144,15 @@ export class RegistrarCalificacionPage {
 								defecto.calificacion = parseFloat(data.calificacion)
 							}
 						})
+
 						suma = excluido.sum('calificacion')
 						sumaCalificacion = elemento.defectos[0].calificacion - suma
+
 						elemento.calificacionXElemento = sumaCalificacion
 					})
 				) : ''
 			) : ''
-		});
+		})
 
 		/* Mostrar el cuadro modal. */
 		modalCalificcion.present()
@@ -199,7 +202,6 @@ export class RegistrarCalificacionPage {
 		});
 
 		toast.present();
-		/* Para armar el repor te en la web. */
 	}
 
 	/* Organizar información para reporte web. */

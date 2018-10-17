@@ -4,7 +4,8 @@ import {
 import {
 	IonicPage,
 	NavController,
-	NavParams
+	NavParams,
+	ToastController
 } from 'ionic-angular'
 import {
 	AutopistasProvider
@@ -31,7 +32,7 @@ export class CalificacionPorTramoPage {
 	}
 	submit: boolean = true
 
-	constructor(public navCtrl: NavController, public navParams: NavParams, private autopistasProvider: AutopistasProvider) {
+	constructor(public navCtrl: NavController, public navParams: NavParams, private autopistasProvider: AutopistasProvider, private toast: ToastController) {
 		this.autopista = this.navParams.get('autopista')
 		this.autopistaId = this.navParams.get('autopista').id
 		this.nombreAutopista = this.navParams.get('autopista').descripcion
@@ -57,16 +58,41 @@ export class CalificacionPorTramoPage {
 	}
 
 	/* Obtener calificaciones por tramo. */
-	consultarCalificacionesXTramo = () => {
+	consultarCalificacionesXTramo() {
+		let toast: any
+
 		this.autopistasProvider.consultarCalificacionesXTramo(this.filtro, this.autopistaId).then((secciones) => {
 			setTimeout(() => {
-				secciones.forEach((seccion) => {
 
-					seccion.calificacionPonderada.map((item) => {
-						seccion['calificacion_ponderada'] = item.factor_elemento * item.calificacion_total
+				!secciones.length ? (
+					toast = this.toast.create({
+						message: 'No hay información para mostrar',
+						duration: 3000,
+						position: 'middle'
+					}),
+					toast.present(),
+					this.listaCalificaciones = []
+				) : (
+
+					this.listaCalificaciones.splice(0, this.listaCalificaciones.length),
+
+					secciones.forEach((seccion) => {
+						let coleccionCalificaciones = collect(seccion.calificacionPonderada)
+
+
+						seccion.calificacionPonderada.map((item) => {
+							item['calificacionMinuendo'] = item.calificaciones[0].calificacion
+							let excluido = item.calificaciones.slice(1)
+							let suma = collect(excluido).sum('calificacion')
+							item['calificacionSustraendo'] = suma
+							item['calificacion_ponderada_elemento'] = (item.calificacionMinuendo - item.calificacionSustraendo) * item.factor_elemento
+
+							// item['calificacion_ponderada_elemento'] = item.calificacion_total * item.factor_elemento
+						})
+						this.listaCalificaciones.push(seccion)
+						seccion['calificacion_ponderada'] = coleccionCalificaciones.sum('calificacion_ponderada_elemento') / coleccionCalificaciones.count()
 					})
-					this.listaCalificaciones.push(seccion)
-				})
+				)
 
 				let promedios = collect(this.listaCalificaciones)
 				this.promediosPonderados = (promedios.sum('calificacion_ponderada') / promedios.count())

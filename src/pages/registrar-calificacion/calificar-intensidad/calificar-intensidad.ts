@@ -79,9 +79,4 @@ export class CalificarIntensidadPage {
 			intensidad: this.intensidad
 		})
 	}
-
-	/* Cerrar el cuadro modal. */
-	cancelar = () => {
-		this.view.dismiss()
-	}
 }

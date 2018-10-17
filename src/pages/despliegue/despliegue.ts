@@ -5,7 +5,8 @@ import {
 	IonicPage,
 	NavController,
 	NavParams,
-	PopoverController
+	PopoverController,
+	ToastController
 } from 'ionic-angular';
 import {
 	CatalogosApiProvider
@@ -31,7 +32,7 @@ export class DesplieguePage {
 	calificacionesParaReporte = []
 
 	constructor(public navCtrl: NavController, public navParams: NavParams, private autopistasProvider: AutopistasProvider,
-		public popoverCtrl: PopoverController, private catalogosApi: CatalogosApiProvider, private storage: Storage) {
+		public popoverCtrl: PopoverController, private catalogosApi: CatalogosApiProvider, private storage: Storage, private toast: ToastController) {
 		this.autopista = this.navParams.get('autopista')
 
 	}
@@ -43,8 +44,24 @@ export class DesplieguePage {
 	/* Obtener listado de calificaciones para sincronizar. */
 	obtenerCalificaciones = () => {
 		this.autopistasProvider.obtenerCalificacionesXAutopista(this.autopista).then((calificaciones) => {
-			this.calificaciones = calificaciones
+
+			calificaciones.length === 0 ? (this.mensajeAdvertencia()) : (
+				this.calificaciones = calificaciones
+			)
 		})
+	}
+
+	/* Mostrar un mensaje de advertencia de que no hay información para mostrar. */
+	mensajeAdvertencia = () => {
+		let toast = this.toast.create({
+			message: 'No hay información para mostrar',
+			duration: 3000,
+			position: 'middle'
+		})
+
+		toast.present()
+
+		this.navCtrl.pop()
 	}
 
 	/* Mostrar el popover de sincronización */
