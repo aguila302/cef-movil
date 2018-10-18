@@ -621,6 +621,17 @@ export class DatabaseProvider {
 		})
 	}
 
+	verificarCalificacionesSeccionCuerpo = (filtro) => {
+		console.log(filtro.seccion.id, filtro.cuerpo.id);
+
+		let paramettros = [filtro.seccion.id, filtro.cuerpo.id]
+		return this.isReady()
+			.then(() => {
+				return this.database.executeSql(`delete from calificaciones where seccion_id = ${filtro.seccion.id} and cuerpo_id = ${filtro.cuerpo.id}`, [])
+			})
+
+	}
+
 	/* Obtener calificaciones de una autopista por tramo y por sección en el origen de datos. */
 	consultarCalificacionesXTramo(filtros, autopistaId) {
 		console.log(filtros);

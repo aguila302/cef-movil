@@ -85,6 +85,12 @@ export class AutopistasProvider {
 		return this.databaseProvider.obtenerCalificacionesXAutopista(autopista)
 	}
 
+	verificarCalificacionesSeccionCuerpo = (filtro) => {
+		/* Verifica si hay informaciòn almacenada en el origen de datos por secciòn y cuerpo. */
+		return this.databaseProvider.verificarCalificacionesSeccionCuerpo(filtro)
+
+	}
+
 	obtenerSeccionReporte = (seccion) => {
 		return this.databaseProvider.obtenerSeccionReporte(seccion)
 	}

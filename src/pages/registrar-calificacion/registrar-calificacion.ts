@@ -160,35 +160,42 @@ export class RegistrarCalificacionPage {
 
 	/* Guardar las calificaciones de los elementos en el origen de datos. */
 	guardarCalificaciones = () => {
-		let loading = this.loading.create({
-			content: 'Por favor espera...'
-		});
+		/* Verifica si hay informaciòn almacenada en el origen de datos por secciòn y cuerpo. */
+		this.autopistasProvider.verificarCalificacionesSeccionCuerpo(this.filtro).then((response) => {
+			console.log(response);
 
-		loading.present()
 
-		let fechaHoraRegistro: string = ''
-		for (let elemento of this.elementos) {
-			for (let defecto of elemento.defectos) {
-				setTimeout(() => {
-					/* Generamos un uuid para guardar la calificacion. */
-					fechaHoraRegistro = new Date().getTime().toString()
-					this.autopistasProvider.guardarCalificaciones(this.autopistaId, this.filtro.cuerpo,
-						this.filtro.seccion, elemento.id, defecto.id, defecto.intensidad, defecto.calificacion, uuid(fechaHoraRegistro, uuid.URL))
+			let loading = this.loading.create({
+				content: 'Por favor espera...'
+			});
 
-				}, 2000);
+			loading.present()
+
+			let fechaHoraRegistro: string = ''
+			for (let elemento of this.elementos) {
+				for (let defecto of elemento.defectos) {
+					setTimeout(() => {
+						/* Generamos un uuid para guardar la calificacion. */
+						fechaHoraRegistro = new Date().getTime().toString()
+						this.autopistasProvider.guardarCalificaciones(this.autopistaId, this.filtro.cuerpo,
+							this.filtro.seccion, elemento.id, defecto.id, defecto.intensidad, defecto.calificacion, uuid(fechaHoraRegistro, uuid.URL))
+
+					}, 2000);
+				}
 			}
-		}
 
-		setTimeout(() => {
-			loading.dismiss()
-			this.reporteadorWeb()
-			this.mostrarConfirmacion()
-			this.reporteCalificacionesWeb.splice(0, this.reporteCalificacionesWeb.length)
-				// this.filtro = {
-				// 	cuerpo: '',
-				// 	seccion: '',
-				// }
-		}, 4000)
+			setTimeout(() => {
+				loading.dismiss()
+				this.reporteadorWeb()
+				this.mostrarConfirmacion()
+				this.reporteCalificacionesWeb.splice(0, this.reporteCalificacionesWeb.length)
+					// this.filtro = {
+					// 	cuerpo: '',
+					// 	seccion: '',
+					// }
+			}, 4000)
+		})
+
 	}
 
 	/*
