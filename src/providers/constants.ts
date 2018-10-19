@@ -1,5 +1,5 @@
-export const URL_BASE: string = 'http://qa.calymayor.com.mx/CEF-WEB/public'
-	// export const URL_BASE: string = 'http://44c2f988.ngrok.io'
-export const TOKEN: string = '1VCLSYZJDRk68oHdTWZM5FcHYPBiz5DlBo5ywcVz'
+// export const URL_BASE: string = 'http://qa.calymayor.com.mx/CEF-WEB/public'
+export const URL_BASE: string = 'http://b45ff851.ngrok.io'
+export const TOKEN: string = 'uU5ol4miLzbUG5E0ZclbgRNza4aqfBT2c8jMlqeO'
 export const CLIENT_ID: string = '2'
 export const HEADER: string = 'application/json'

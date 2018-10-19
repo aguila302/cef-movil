@@ -622,12 +622,12 @@ export class DatabaseProvider {
 	}
 
 	verificarCalificacionesSeccionCuerpo = (filtro) => {
-		console.log(filtro.seccion.id, filtro.cuerpo.id);
+		// console.log(filtro.seccion.id, filtro.cuerpo.id);
 
-		let paramettros = [filtro.seccion.id, filtro.cuerpo.id]
+		let paramettros = [filtro.seccion.id]
 		return this.isReady()
 			.then(() => {
-				return this.database.executeSql(`delete from calificaciones where seccion_id = ${filtro.seccion.id} and cuerpo_id = ${filtro.cuerpo.id}`, [])
+				return this.database.executeSql(`delete from calificaciones where seccion_id = ?`, paramettros)
 			})
 
 	}
