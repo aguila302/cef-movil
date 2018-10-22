@@ -162,8 +162,6 @@ export class RegistrarCalificacionPage {
 	guardarCalificaciones = () => {
 		/* Verifica si hay informaciòn almacenada en el origen de datos por secciòn y cuerpo. */
 		this.autopistasProvider.verificarCalificacionesSeccionCuerpo(this.filtro).then((response) => {
-			console.log(response);
-
 
 			let loading = this.loading.create({
 				content: 'Por favor espera...'
