@@ -75,11 +75,19 @@ export class MyApp {
 
 	initializeApp() {
 		this.platform.ready().then(() => {
+			// this.platform.registerBackButtonAction(function(e) {
+			// 	console.log('');
+
+			// });
 			// Okay, so the platform is ready and our plugins are available.
 			// Here you can do any higher level native things you might need.
 			this.statusBar.styleDefault();
 			this.splashScreen.hide();
 		});
+	}
+	myHandlerFunction() {
+		console.log('asas');
+
 	}
 
 	openPage(page) {

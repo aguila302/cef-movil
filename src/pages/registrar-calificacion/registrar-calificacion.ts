@@ -21,7 +21,9 @@ import {
 	ModalController,
 	ToastController,
 	LoadingController,
-	ViewController
+	ViewController,
+	AlertController,
+	Platform
 } from 'ionic-angular'
 import {
 	AutopistasProvider
@@ -53,13 +55,46 @@ export class RegistrarCalificacionPage {
 
 	constructor(public navCtrl: NavController, public navParams: NavParams,
 		private autopistasProvider: AutopistasProvider, public modal: ModalController,
-		private toast: ToastController, public loading: LoadingController, public view: ViewController) {
+		private toast: ToastController, public loading: LoadingController, public view: ViewController,
+		private alertCtrl: AlertController, public platform: Platform) {
+
 		/* Obtener información de la autopista actual. */
 		this.autopistaId = this.navParams.get('autopista').id
 		this.nombreAutopista = this.navParams.get('autopista').descripcion
 		this.autopista = this.navParams.get('autopista')
 	}
+	myHandlerFunction() {
+		console.log('sassss');
 
+	}
+	ionViewCanLeave() {
+		console.log(this.elementos)
+		this.elementos.map((item) => {
+			console.log(item.calificacionXElemento)
+			if (item.calificacionXElemento > 0) {
+				let alert = this.alertCtrl.create({
+					title: 'Confirm purchase',
+					message: 'Do you want to buy this book?',
+					buttons: [{
+						text: 'Cancel',
+						role: 'cancel',
+						handler: () => {
+							console.log('Cancel clicked');
+						}
+					}, {
+						text: 'Buy',
+						handler: () => {
+							console.log('Buy clicked');
+						}
+					}]
+				});
+				alert.present();
+
+			}
+
+		})
+
+	}
 	ionViewDidLoad() {
 		/* Obtener listado de secciones. */
 		this.autopistasProvider.obtenerSecciones(this.autopistaId).then((secciones) => {

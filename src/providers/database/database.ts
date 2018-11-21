@@ -59,11 +59,11 @@ export class DatabaseProvider {
 					})
 
 					// /* Exportamos el origen de datos a sql. */
-					this.sqlitePorter.exportDbToSql(this.database).then((sql) => {
-						console.log(sql)
-					}).catch(e => {
-						console.error(e)
-					})
+					// this.sqlitePorter.exportDbToSql(this.database).then((sql) => {
+					// 	console.log(sql)
+					// }).catch(e => {
+					// 	console.error(e)
+					// })
 				})
 			})
 
