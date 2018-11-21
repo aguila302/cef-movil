@@ -23,13 +23,13 @@
             </ion-item>
             <div ion-text color="danger" padding-left *ngIf="calificacion.invalid && (calificacion.dirty || calificacion.touched)">
                 <p ion-text color="danger" padding-left *ngIf="calificacion.errors.required">
-                    La calificación es obligatorio.
+                    La calificación es obligatorio
                 </p>
                 <p ion-text color="danger" padding-left *ngIf="calificacion.errors.min">
-                    La calificación minima debe ser de {{ calificacionInicial }}.
+                    La calificación minima debe ser de {{ calificacionInicial }}
                 </p>
                 <p ion-text color="danger" padding-left *ngIf="calificacion.errors.max">
-                    La calificación maxima debe ser de {{ calificacionFinal }}.
+                    La calificación maxima debe ser de {{ calificacionFinal }}
                 </p>
             </div>
         </ion-list>

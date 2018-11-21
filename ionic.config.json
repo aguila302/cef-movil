@@ -1,8 +1,8 @@
 {
   "name": "cef-movil",
-  "app_id": "83d6706e",
-  "type": "ionic-angular",
   "integrations": {
     "cordova": {}
-  }
+  },
+  "type": "ionic-angular",
+  "pro_id": "83d6706e"
 }

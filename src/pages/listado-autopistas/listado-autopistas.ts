@@ -97,6 +97,8 @@ export class ListadoAutopistasPage {
 	mostrarOpciones = (autopista) => {
 		let apciones = this.acciones.create({
 			title: 'Selecciona una opción',
+			enableBackdropDismiss: false,
+			
 			buttons: [{
 					text: 'Registrar calificación de un camino',
 					role: 'destructive',
@@ -104,10 +106,6 @@ export class ListadoAutopistasPage {
 						/* Mostrar el componente de registrar calificación. */
 						this.navCtrl.push('RegistrarCalificacionPage', {
 							autopista
-						}, {
-							animate: true,
-							animation: 'ios-transition',
-							direction: 'forward'
 						})
 					}
 				}, {
