@@ -19,7 +19,7 @@
         <ion-list>
             <ion-item>
                 <ion-label floating>Calificación</ion-label>
-                <ion-input formControlName="calificacion" [brmasker]="{mask: '0.00', len:3, decimal: 1}" required max="{{ calificacionFinal }}" min="{{ calificacionInicial }}" type="number" value="{{ calificaionCero }}"></ion-input>
+                <ion-input formControlName="calificacion" [brmasker]="{mask: '0.0', len:3, decimal: 1}" required max="{{ calificacionFinal }}" min="{{ calificacionInicial }}" type="number" value="{{ calificaionCero }}"></ion-input>
             </ion-item>
             <div ion-text color="danger" padding-left *ngIf="calificacion.invalid && (calificacion.dirty || calificacion.touched)">
                 <p ion-text color="danger" padding-left *ngIf="calificacion.errors.required">

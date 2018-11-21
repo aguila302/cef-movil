@@ -115,10 +115,6 @@ export class ListadoAutopistasPage {
 						/* Mostrar el componente de resumen de calificaciones. */
 						this.navCtrl.push('ResumenCalificacionesPage', {
 							autopista
-						}, {
-							animate: true,
-							animation: 'ios-transition',
-							direction: 'forward'
 						})
 					}
 				}, {
@@ -128,10 +124,6 @@ export class ListadoAutopistasPage {
 						/* Mostrar el componente de resumen de calificaciones. */
 						this.navCtrl.push('CalificacionPorTramoPage', {
 							autopista
-						}, {
-							animate: true,
-							animation: 'ios-transition',
-							direction: 'forward'
 						})
 					}
 				}, {
@@ -142,10 +134,6 @@ export class ListadoAutopistasPage {
 						this.navCtrl.push('DesplieguePage', {
 							autopista,
 							access_token: this.access_token
-						}, {
-							animate: true,
-							animation: 'ios-transition',
-							direction: 'forward'
 						})
 					}
 				}

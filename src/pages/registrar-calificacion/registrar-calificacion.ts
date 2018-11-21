@@ -63,10 +63,7 @@ export class RegistrarCalificacionPage {
 		this.nombreAutopista = this.navParams.get('autopista').descripcion
 		this.autopista = this.navParams.get('autopista')
 	}
-	myHandlerFunction() {
-		console.log('sassss');
 
-	}
 	ionViewCanLeave() {
 		console.log(this.elementos)
 		this.elementos.map((item) => {
