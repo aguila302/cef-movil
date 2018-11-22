@@ -79,4 +79,9 @@ export class CalificarIntensidadPage {
 			intensidad: this.intensidad
 		})
 	}
+
+	/* Cancelar calificación */
+	cancelar = () => {
+		this.form.reset()
+	}
 }

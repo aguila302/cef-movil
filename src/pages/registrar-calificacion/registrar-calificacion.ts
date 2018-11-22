@@ -64,40 +64,39 @@ export class RegistrarCalificacionPage {
 		this.autopista = this.navParams.get('autopista')
 	}
 
-	ionViewCanLeave() {
-		console.log(this.elementos)
-		this.elementos.map((item) => {
-			console.log(item.calificacionXElemento)
-			if (item.calificacionXElemento > 0) {
-				let alert = this.alertCtrl.create({
-					title: 'Confirm purchase',
-					message: 'Do you want to buy this book?',
-					buttons: [{
-						text: 'Cancel',
-						role: 'cancel',
-						handler: () => {
-							console.log('Cancel clicked');
-						}
-					}, {
-						text: 'Buy',
-						handler: () => {
-							console.log('Buy clicked');
-						}
-					}]
-				});
-				alert.present();
-
-			}
-
-		})
-
+	async ionViewCanLeave() {
+		const shouldLeave = await this.confirmLeave();
+		return shouldLeave;
 	}
+
+	/* Confirmar la salida del componente. */
+	confirmLeave(): Promise < Boolean > {
+		let resolveLeaving;
+		const canLeave = new Promise < Boolean > (resolve => resolveLeaving = resolve);
+		const alert = this.alertCtrl.create({
+			title: 'Confirm leave',
+			message: 'Do you want to leave the page?',
+			buttons: [{
+					text: 'No',
+					role: 'cancel',
+					handler: () => resolveLeaving(false)
+				},
+				{
+					text: 'Yes',
+					handler: () => resolveLeaving(true)
+				}
+			]
+		});
+		alert.present();
+		return canLeave
+	}
+
 	ionViewDidLoad() {
 		/* Obtener listado de secciones. */
 		this.autopistasProvider.obtenerSecciones(this.autopistaId).then((secciones) => {
-				this.secciones = secciones
-			})
-			/* Obtener listado de cuerpos. */
+			this.secciones = secciones
+		})
+		/* Obtener listado de cuerpos. */
 		this.autopistasProvider.obtenerCuerpos().then((cuerpos) => {
 			this.cuerpos = cuerpos
 		})
@@ -153,37 +152,37 @@ export class RegistrarCalificacionPage {
 		modalCalificcion.onDidDismiss((data) => {
 			let elementoCalificado = []
 			let sumaCalificacion: number = 0
-			data.calificacion !== '' ? (
-				/* Si hay calificación para dicho defecto obtener su elemento correspondiente a esta calificación */
-				data ? (
-					elementoCalificado = this.elementos.filter(function(elemento) {
-						return elemento.id === data.intensidad.elemento_id
-					}),
+			data.calificacion === null ? data.calificacion = 0 : ''
+			/* Si hay calificación para dicho defecto obtener su elemento correspondiente a esta calificación */
+			data ? (
+				elementoCalificado = this.elementos.filter(function(elemento) {
+					return elemento.id === data.intensidad.elemento_id
+				}),
 
-					elementoCalificado.map((elemento) => {
-						let suma: number = 0
-						elemento['valorCalificacionMinuendo'] = elemento.defectos[0].calificacion
+				elementoCalificado.map((elemento) => {
+					let suma: number = 0
+					elemento['valorCalificacionMinuendo'] = elemento.defectos[0].calificacion
 
-						let excluido = collect(elemento.defectos.slice(1))
-						elemento.defectos.map((defecto) => {
-							/* Obtener defecto a calificar. */
-							if (defecto.id == data.intensidad.rangos[0].defecto_id) {
-								if (defecto.calificacion != 0) {
-									defecto.calificacion = 0
-								}
-								defecto.intensidad = intensidad.id
-									/* Asignar calificación a un defecto. */
-								defecto.calificacion = parseFloat(data.calificacion)
+					let excluido = collect(elemento.defectos.slice(1))
+					elemento.defectos.map((defecto) => {
+						/* Obtener defecto a calificar. */
+						if (defecto.id == data.intensidad.rangos[0].defecto_id) {
+							if (defecto.calificacion != 0) {
+								defecto.calificacion = 0
 							}
-						})
-
-						suma = excluido.sum('calificacion')
-						sumaCalificacion = elemento.defectos[0].calificacion - suma
-
-						elemento.calificacionXElemento = sumaCalificacion
+							defecto.intensidad = intensidad.id
+							/* Asignar calificación a un defecto. */
+							defecto.calificacion = parseFloat(data.calificacion)
+						}
 					})
-				) : ''
+
+					suma = excluido.sum('calificacion')
+					sumaCalificacion = elemento.defectos[0].calificacion - suma
+
+					elemento.calificacionXElemento = sumaCalificacion
+				})
 			) : ''
+			//) : ''
 		})
 
 		/* Mostrar el cuadro modal. */
@@ -196,7 +195,8 @@ export class RegistrarCalificacionPage {
 		this.autopistasProvider.verificarCalificacionesSeccionCuerpo(this.filtro).then((response) => {
 
 			let loading = this.loading.create({
-				content: 'Por favor espera...'
+				spinner: 'circles',
+				content: 'Por favor espera'
 			});
 
 			loading.present()
@@ -219,10 +219,10 @@ export class RegistrarCalificacionPage {
 				this.reporteadorWeb()
 				this.mostrarConfirmacion()
 				this.reporteCalificacionesWeb.splice(0, this.reporteCalificacionesWeb.length)
-					// this.filtro = {
-					// 	cuerpo: '',
-					// 	seccion: '',
-					// }
+				// this.filtro = {
+				// 	cuerpo: '',
+				// 	seccion: '',
+				// }
 			}, 4000)
 		})
 
