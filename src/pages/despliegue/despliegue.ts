@@ -67,6 +67,7 @@ export class DesplieguePage {
 	/* Mostrar el popover de sincronización */
 	popover = (event: any) => {
 		let popover = this.popoverCtrl.create('PopoverPage', {}, {
+			cssClass : 'popover'
 		})
 
 		/* Muestra el popover para sincronizar los levantamientos. */

@@ -82,13 +82,12 @@ export class MyApp {
 			// Okay, so the platform is ready and our plugins are available.
 			// Here you can do any higher level native things you might need.
 			this.statusBar.styleDefault();
-			this.splashScreen.hide();
+			setTimeout(() => {
+				this.splashScreen.hide();
+			}, 100)
 		});
 	}
-	myHandlerFunction() {
-		console.log('asas');
 
-	}
 
 	openPage(page) {
 		// Reset the content nav to have just this page
