@@ -24,13 +24,6 @@ import {
 	ViewController
 } from 'ionic-angular';
 
-/**
- * Generated class for the CalificarIntensidadPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
 @IonicPage()
 @Component({
 	selector: 'page-calificar-intensidad',
@@ -53,6 +46,9 @@ export class CalificarIntensidadPage {
 		this.calificacionFinal = this.navParams.get('intensidad').rangos[0].rango_final
 
 		this.calificacionInicial === 0 && this.calificacionFinal === 0 ? this.calificaionCero = 0 : ''
+
+		console.log(this.calificacionInicial)
+		console.log(this.calificacionFinal)
 
 	}
 
