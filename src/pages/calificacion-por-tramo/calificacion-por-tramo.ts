@@ -92,7 +92,7 @@ export class CalificacionPorTramoPage {
 						seccion['calificacion_ponderada'] = coleccionCalificaciones.sum('calificacion_ponderada_elemento')
 					})
 				)
-
+				console.log(secciones)
 				let promedios = collect(this.listaCalificaciones)
 				this.promediosPonderados = (promedios.sum('calificacion_ponderada'))
 
