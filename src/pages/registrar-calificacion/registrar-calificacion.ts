@@ -65,30 +65,41 @@ export class RegistrarCalificacionPage {
 	}
 
 	async ionViewCanLeave() {
-		const shouldLeave = await this.confirmLeave();
-		return shouldLeave;
+		let sumaCalificacion: number = 0
+
+		/* Obteern calificación por elemento. */
+		this.elementos.map(function(elemento) {
+			sumaCalificacion += elemento.calificacionXElemento
+		})
+
+		/* Si hay una calificación asignada a un elemento. */
+		if (sumaCalificacion > 0) {
+			let salir = await this.confirmarSalida()
+			return salir
+		}
 	}
 
 	/* Confirmar la salida del componente. */
-	confirmLeave(): Promise < Boolean > {
-		let resolveLeaving;
-		const canLeave = new Promise < Boolean > (resolve => resolveLeaving = resolve);
+	confirmarSalida(): Promise < Boolean > {
+		let resolverSalida
+		const puedoSalir = new Promise < Boolean > (resolve => resolverSalida = resolve)
+
 		const alert = this.alertCtrl.create({
-			title: 'Confirm leave',
-			message: 'Do you want to leave the page?',
+
+			message: '¿Quieres salir de la página?',
 			buttons: [{
-					text: 'No',
+					text: 'Cancelar',
 					role: 'cancel',
-					handler: () => resolveLeaving(false)
+					handler: () => resolverSalida(false)
 				},
 				{
-					text: 'Yes',
-					handler: () => resolveLeaving(true)
+					text: 'Aceptar',
+					handler: () => resolverSalida(true)
 				}
 			]
-		});
-		alert.present();
-		return canLeave
+		})
+		alert.present()
+		return puedoSalir
 	}
 
 	ionViewDidLoad() {
