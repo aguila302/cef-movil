@@ -85,20 +85,16 @@ export class CalificacionPorTramoPage {
 							let excluido = item.calificaciones.slice(1)
 							let suma = collect(excluido).sum('calificacion')
 							item['calificacionSustraendo'] = suma
-							item['calificacion_ponderada_elemento'] = (item.calificacionMinuendo - item.calificacionSustraendo) * item.factor_elemento
 
-							// item['calificacion_ponderada_elemento'] = item.calificacion_total * item.factor_elemento
+							item['calificacion_ponderada_elemento'] = (item.calificacionMinuendo - item.calificacionSustraendo) * item.factor_elemento
 						})
-						console.log(seccion)
 						this.listaCalificaciones.push(seccion)
-						seccion['calificacion_ponderada'] = coleccionCalificaciones.sum('calificacion_ponderada_elemento') / coleccionCalificaciones.count()
+						seccion['calificacion_ponderada'] = coleccionCalificaciones.sum('calificacion_ponderada_elemento')
 					})
 				)
 
 				let promedios = collect(this.listaCalificaciones)
-				this.promediosPonderados = (promedios.sum('calificacion_ponderada') / promedios.count())
-
-				console.log(this.listaCalificaciones);
+				this.promediosPonderados = (promedios.sum('calificacion_ponderada'))
 
 			}, 1000)
 		})

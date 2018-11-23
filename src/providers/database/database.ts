@@ -634,8 +634,6 @@ export class DatabaseProvider {
 
 	/* Obtener calificaciones de una autopista por tramo y por sección en el origen de datos. */
 	consultarCalificacionesXTramo(filtros, autopistaId) {
-		console.log(filtros);
-
 		let listaSecciones = []
 		return this.isReady()
 			.then(() => {
