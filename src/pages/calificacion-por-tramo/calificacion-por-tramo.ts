@@ -89,6 +89,7 @@ export class CalificacionPorTramoPage {
 
 							// item['calificacion_ponderada_elemento'] = item.calificacion_total * item.factor_elemento
 						})
+						console.log(seccion)
 						this.listaCalificaciones.push(seccion)
 						seccion['calificacion_ponderada'] = coleccionCalificaciones.sum('calificacion_ponderada_elemento') / coleccionCalificaciones.count()
 					})
